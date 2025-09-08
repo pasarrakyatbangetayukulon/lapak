@@ -12,23 +12,39 @@ async function loadData() {
   try {
     showLoading(true);
     const res = await fetch(API_URL);
-    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("HTTP ERROR:", res.status, res.statusText);
+      showToast("Gagal konek ke server (" + res.status + ")", "error");
+      return;
+    }
+
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error("JSON parse error:", err, text);
+      showToast("Respon server tidak valid", "error");
+      return;
+    }
+
     lapakData = data;
 
-    // Default: tampil semua
     pageSize = lapakData.length;
     document.getElementById("pageSizeSelect").value = "all";
 
-    // Buat dropdown range otomatis
     generateRangeOptions();
-
     renderGrid();
+
   } catch (err) {
-    console.error("Gagal load data:", err);
+    console.error("Fetch error:", err);
+    showToast("Terjadi kesalahan koneksi!", "error");
   } finally {
     showLoading(false);
   }
 }
+
 
 // === Loading Spinner ===
 function showLoading(show) {
