@@ -290,6 +290,58 @@ main {
   background: #ccc;
   cursor: not-allowed;
 }
+/* === Rekap Absensi === */
+.rekap-section {
+  margin-top: 30px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow-x: auto;
+}
+.rekap-section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  text-align: center;
+}
+.rekap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background: #fff;
+}
+.rekap-table thead {
+  background: #2c3e50;
+  color: #fff;
+}
+.rekap-table th,
+.rekap-table td {
+  padding: 10px 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+.rekap-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+.rekap-table tbody tr:hover {
+  background: #f1f7ff;
+}
+
+/* Warna status absensi */
+.rekap-table td.status-hadir {
+  color: #28a745;
+  font-weight: bold;
+}
+.rekap-table td.status-tidak {
+  color: #dc3545;
+  font-weight: bold;
+}
+.rekap-table td.status-warning {
+  background: #ffe5e5;
+  color: #c0392b;
+  font-weight: bold;
+}
 
 /* === Responsif Breakpoints === */
 @media (max-width: 1200px) {
@@ -357,5 +409,37 @@ main {
     font-size: 0.8rem;
     padding: 6px 0;
     border-radius: 5px;
+  }
+}
+/* === Responsif Rekap Absensi === */
+@media (max-width: 768px) {
+  .rekap-section {
+    padding: 15px;
+  }
+  .rekap-section h2 {
+    font-size: 1.2rem;
+  }
+  .rekap-table {
+    font-size: 0.85rem;
+  }
+  .rekap-table th,
+  .rekap-table td {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rekap-section {
+    padding: 12px;
+  }
+  .rekap-section h2 {
+    font-size: 1rem;
+  }
+  .rekap-table {
+    font-size: 0.8rem;
+  }
+  .rekap-table th,
+  .rekap-table td {
+    padding: 6px;
   }
 }
