@@ -109,10 +109,12 @@ main {
   color: #fff !important;
   border: 1px solid #c0392b !important;
 }
-.lapak .inside {
-  color: blue;
-  font-weight: 500;
+/* Warna khusus untuk teks dalam kurung */
+.inside {
+  color: #007bff;   /* biru */
+  font-style: italic; /* opsional, biar beda */
 }
+
 
 /* === Tombol dalam Modal (Absensi & Request) === */
 .btn-absensi,
