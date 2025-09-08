@@ -13,19 +13,30 @@
     </header>
 
     <main>
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading">Loading...</div>
+
         <!-- Toolbar -->
         <div class="toolbar">
-            <input type="text" id="searchInput" placeholder="🔎 Cari nama atau nomor lapak...">
+            <input type="text" id="searchInput" placeholder="🔎 Cari lapak atau nama...">
             <select id="filterSelect">
                 <option value="all">Semua</option>
                 <option value="kosong">Kosong</option>
                 <option value="terisi">Terisi</option>
             </select>
+            <select id="rangeSelect"></select>
+            <select id="pageSizeSelect">
+                <option value="10">10 / halaman</option>
+                <option value="20" selected>20 / halaman</option>
+                <option value="50">50 / halaman</option>
+                <option value="all">Semua</option>
+            </select>
         </div>
 
         <!-- Grid Lapak -->
         <section>
-            <div class="grid" id="lapakGrid"></div>
+            <div id="lapakGrid" class="grid"></div>
+            <div id="paginationNav" class="pagination"></div>
         </section>
     </main>
 
