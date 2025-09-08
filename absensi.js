@@ -23,6 +23,7 @@ function closeAbsensiModal() {
 }
 
 // === Konfirmasi Absensi ===
+// === Konfirmasi Absensi ===
 async function confirmAbsensi() {
   const modal = document.getElementById("absensiModal");
   const lapakId = modal.dataset.lapakId;
@@ -37,9 +38,11 @@ async function confirmAbsensi() {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        action: "absen",
+      headers: {
+        "Content-Type": "application/json" // ✅ kirim JSON
+      },
+      body: JSON.stringify({
+        action: "absen",   // ✅ backend siap terima ini
         noLapak: lapakId,
         password: password
       })
