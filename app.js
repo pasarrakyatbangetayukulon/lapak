@@ -30,13 +30,11 @@ async function loadData() {
     }
 
     lapakData = data;
-
     pageSize = lapakData.length;
     document.getElementById("pageSizeSelect").value = "all";
 
     generateRangeOptions();
     renderGrid();
-
   } catch (err) {
     console.error("Fetch error:", err);
     showToast("Terjadi kesalahan koneksi!", "error");
@@ -44,7 +42,6 @@ async function loadData() {
     showLoading(false);
   }
 }
-
 
 // === Loading Spinner ===
 function showLoading(show) {
@@ -76,7 +73,6 @@ function generateRangeOptions() {
   rangeSelect.appendChild(optAll);
 
   let maxNo = lapakData.length > 0 ? lapakData[lapakData.length - 1].no : 0;
-
   let step = 50;
   for (let start = 1; start <= maxNo; start += step) {
     let end = Math.min(start + step - 1, maxNo);
@@ -99,7 +95,6 @@ function renderGrid() {
   let filtered = lapakData.filter(({ no, nama, status }) => {
     if (filter === "kosong" && status !== "kosong") return false;
     if (filter === "terisi" && status !== "terisi") return false;
-
     if (!no.toString().includes(search) && !nama.toLowerCase().includes(search)) return false;
 
     if (range !== "all") {
@@ -114,23 +109,19 @@ function renderGrid() {
   const startIdx = (currentPage - 1) * pageSize;
   const pageData = filtered.slice(startIdx, startIdx + pageSize);
 
-pageData.forEach(({ no, nama, status }) => {
-  const div = document.createElement("div");
-  div.className = "lapak " + status;
-  div.innerHTML = `
-    <strong>${no}</strong><br>${nama}
-    <div class="btn-group-vertical">
-      <button class="btn-absensi" onclick="openAbsensiModal(${no}, '${nama.replace(/'/g, "\\'")}')">
-        ✅ Absensi
-      </button>
-      <button class="btn-request" onclick="openRequestModal(${no}, '${nama.replace(/'/g, "\\'")}')">
-        🔄 Request
-      </button>
-    </div>
-  `;
-  grid.appendChild(div);
-});
-
+  pageData.forEach(({ no, nama, status }) => {
+    const div = document.createElement("div");
+    div.className = "lapak " + status;
+    div.innerHTML = `
+      <strong>${no}</strong><br>${nama}
+      <div class="btn-group">
+        <button class="btn-detail" onclick="openDetailModal(${no}, '${nama.replace(/'/g, "\\'")}')">
+          🔍 Detail
+        </button>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
 
   renderPagination(totalPages);
 }
@@ -139,7 +130,6 @@ pageData.forEach(({ no, nama, status }) => {
 function renderPagination(totalPages) {
   const nav = document.getElementById("paginationNav");
   nav.innerHTML = "";
-
   if (totalPages <= 1) return;
 
   const info = document.createElement("span");
@@ -165,7 +155,20 @@ function renderPagination(totalPages) {
   nav.appendChild(nextBtn);
 }
 
-// === Modal ===
+// === Modal Detail ===
+function openDetailModal(no, nama) {
+  selectedLapak = no;
+  const modal = document.getElementById("detailModal");
+  modal.querySelector("#detailTitle").textContent = `Lapak ${no} - ${nama}`;
+  modal.querySelector("#btnAbsensi").onclick = () => openAbsensiModal(no, nama);
+  modal.querySelector("#btnRequest").onclick = () => openRequestModal(no, nama);
+  modal.style.display = "flex";
+}
+
+function closeDetailModal() {
+  document.getElementById("detailModal").style.display = "none";
+}
+
 // === Modal Request ===
 function openRequestModal(lapakNo, namaPelapak) {
   selectedLapak = lapakNo;
@@ -178,13 +181,11 @@ function closeRequestModal() {
   document.getElementById("requestForm").reset();
 }
 
-
-// === Form Submit + Toast ===
-// === Form Submit ===
+// === Submit Request Form ===
 const form = document.getElementById("requestForm");
 const submitBtn = document.getElementById("submitBtn");
 const toast = document.getElementById("toast");
-// === Form Submit ===
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -213,8 +214,6 @@ form.addEventListener("submit", async (e) => {
     }
 
     const text = await res.text();
-    console.log("RAW RESPONSE:", text);
-
     let result;
     try {
       result = JSON.parse(text);
@@ -228,7 +227,8 @@ form.addEventListener("submit", async (e) => {
       showToast(result.message, "success");
       form.reset();
       setTimeout(() => {
-        closeModal();
+        closeRequestModal();
+        closeDetailModal();
         loadData();
       }, 1500);
     } else {
@@ -243,9 +243,7 @@ form.addEventListener("submit", async (e) => {
   submitBtn.textContent = "Kirim";
 });
 
- 
- 
-
+// === Toast ===
 function showToast(message, type) {
   toast.textContent = message;
   toast.className = `toast ${type}`;
@@ -255,32 +253,7 @@ function showToast(message, type) {
   }, 3000);
 }
 
-
-// === Event Listeners ===
-document.getElementById("searchInput").addEventListener("input", () => {
-  currentPage = 1;
-  renderGrid();
-});
-document.getElementById("filterSelect").addEventListener("change", () => {
-  currentPage = 1;
-  renderGrid();
-});
-document.getElementById("rangeSelect").addEventListener("change", () => {
-  currentPage = 1;
-  renderGrid();
-});
-document.getElementById("pageSizeSelect").addEventListener("change", (e) => {
-  pageSize = e.target.value === "all" ? lapakData.length : parseInt(e.target.value);
-  currentPage = 1;
-  renderGrid();
-});
-
-// === Init ===
-loadData();
-
-
-
-// === Buka Modal Absensi ===
+// === Modal Absensi ===
 async function openAbsensiModal(lapakNo, namaPelapak) {
   selectedLapak = lapakNo;
   document.getElementById("absensiTitle").textContent = `Absensi Lapak ${lapakNo} - ${namaPelapak}`;
@@ -323,3 +296,24 @@ function closeAbsensiModal() {
   document.getElementById("absensiModal").style.display = "none";
 }
 
+// === Event Listeners ===
+document.getElementById("searchInput").addEventListener("input", () => {
+  currentPage = 1;
+  renderGrid();
+});
+document.getElementById("filterSelect").addEventListener("change", () => {
+  currentPage = 1;
+  renderGrid();
+});
+document.getElementById("rangeSelect").addEventListener("change", () => {
+  currentPage = 1;
+  renderGrid();
+});
+document.getElementById("pageSizeSelect").addEventListener("change", (e) => {
+  pageSize = e.target.value === "all" ? lapakData.length : parseInt(e.target.value);
+  currentPage = 1;
+  renderGrid();
+});
+
+// === Init ===
+loadData();
