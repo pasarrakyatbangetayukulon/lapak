@@ -151,6 +151,7 @@ function closeModal() {
 }
 
 // === Form Submit + Toast ===
+// === Form Submit ===
 const form = document.getElementById("requestForm");
 const submitBtn = document.getElementById("submitBtn");
 const toast = document.getElementById("toast");
@@ -158,28 +159,23 @@ const toast = document.getElementById("toast");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const data = {
-    nama: document.getElementById("nama").value.trim(),
-    lapakLama: document.getElementById("lapakLama").value.trim(),
-    lapakBaru: document.getElementById("lapakBaru").value.trim(),
-    alasan: document.getElementById("alasan").value.trim(),
-    password: document.getElementById("password").value.trim(),
+  const body = {
+    nama: document.getElementById("nama").value,
+    lapakLama: document.getElementById("lapakLama").value,
+    lapakBaru: document.getElementById("lapakBaru").value,
+    alasan: document.getElementById("alasan").value,
+    password: document.getElementById("password").value
   };
 
-  if (Object.values(data).some(v => !v)) {
-    showToast("Harap isi semua field!", "error");
-    return;
-  }
-
-  submitBtn.classList.add("loading");
+  // tombol loading
   submitBtn.disabled = true;
   submitBtn.textContent = "Mengirim...";
 
   try {
     const res = await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
     });
 
     const result = await res.json();
@@ -190,15 +186,16 @@ form.addEventListener("submit", async (e) => {
       setTimeout(() => {
         closeModal();
         loadData();
-      }, 2000);
+      }, 1500);
     } else {
       showToast(result.message, "error");
     }
   } catch (err) {
+    console.error("Gagal kirim request:", err);
     showToast("Terjadi kesalahan koneksi!", "error");
   }
 
-  submitBtn.classList.remove("loading");
+  // reset tombol
   submitBtn.disabled = false;
   submitBtn.textContent = "Kirim";
 });
@@ -211,6 +208,7 @@ function showToast(message, type) {
     toast.style.display = "none";
   }, 3000);
 }
+
 
 // === Event Listeners ===
 document.getElementById("searchInput").addEventListener("input", () => {
