@@ -97,6 +97,13 @@ main {
 .lapak.kosong { background: #2ecc71; color: #fff; }
 .lapak.terisi { background: #fff; color: #333; }
 
+/* Warning lapak absen >= 3 */
+.lapak.warning {
+  background: #e74c3c !important;
+  color: #fff !important;
+  border: 1px solid #c0392b !important;
+}
+
 /* === Button Absensi & Request === */
 .btn-absensi,
 .btn-request {
