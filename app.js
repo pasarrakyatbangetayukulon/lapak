@@ -114,13 +114,23 @@ function renderGrid() {
   const startIdx = (currentPage - 1) * pageSize;
   const pageData = filtered.slice(startIdx, startIdx + pageSize);
 
-  pageData.forEach(({ no, nama, status }) => {
-    const div = document.createElement("div");
-    div.className = "lapak " + status;
-    div.innerHTML = `<strong>${no}</strong><br>${nama}`;
-    div.onclick = () => openModal(no, nama);
-    grid.appendChild(div);
-  });
+pageData.forEach(({ no, nama, status }) => {
+  const div = document.createElement("div");
+  div.className = "lapak " + status;
+  div.innerHTML = `
+    <strong>${no}</strong><br>${nama}
+    <div class="btn-group-vertical">
+      <button class="btn-absensi" onclick="openAbsensiModal(${no}, '${nama.replace(/'/g, "\\'")}')">
+        ✅ Absensi
+      </button>
+      <button class="btn-request" onclick="openRequestModal(${no}, '${nama.replace(/'/g, "\\'")}')">
+        🔄 Request
+      </button>
+    </div>
+  `;
+  grid.appendChild(div);
+});
+
 
   renderPagination(totalPages);
 }
@@ -156,15 +166,18 @@ function renderPagination(totalPages) {
 }
 
 // === Modal ===
-function openModal(lapakNo, namaPelapak) {
+// === Modal Request ===
+function openRequestModal(lapakNo, namaPelapak) {
   selectedLapak = lapakNo;
   document.getElementById("lapakLama").value = lapakNo + " - " + namaPelapak;
   document.getElementById("requestModal").style.display = "flex";
 }
-function closeModal() {
+
+function closeRequestModal() {
   document.getElementById("requestModal").style.display = "none";
   document.getElementById("requestForm").reset();
 }
+
 
 // === Form Submit + Toast ===
 // === Form Submit ===
