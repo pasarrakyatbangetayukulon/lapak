@@ -242,7 +242,6 @@ main {
   background: #ccc;
   cursor: not-allowed;
 }
-
 /* === Responsif Breakpoints === */
 @media (max-width: 1200px) {
   .grid { grid-template-columns: repeat(4, 1fr); }
@@ -251,17 +250,19 @@ main {
 @media (max-width: 768px) {
   header h1 { font-size: 1.4rem; }
 
-  /* Toolbar mobile */
+  /* === Toolbar Compact untuk Mobile === */
   .toolbar {
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;  /* jarak antar elemen lebih rapat */
+    padding: 8px;
   }
   .toolbar input,
   .toolbar select {
-    width: 100% !important;
-    min-width: unset !important;
-    font-size: 1rem !important;
-    padding: 12px !important;
+    width: 100%;
+    min-width: unset;
+    font-size: 0.9rem;   /* font lebih kecil */
+    padding: 8px;        /* padding lebih kecil */
+    border-radius: 5px;
   }
 
   .grid { grid-template-columns: repeat(3, 1fr); }
@@ -278,11 +279,15 @@ main {
   .lapak { font-size: 0.8rem; padding: 10px; }
   .modal-content { padding: 1rem; }
 
-  /* Toolbar lebih nyaman */
+  /* === Toolbar lebih compact di HP kecil === */
+  .toolbar {
+    gap: 6px;
+    padding: 6px;
+  }
   .toolbar input,
   .toolbar select {
-    font-size: 0.95rem;
-    padding: 12px;
+    font-size: 0.85rem;
+    padding: 7px;
   }
 
   .btn, .form-actions button {
