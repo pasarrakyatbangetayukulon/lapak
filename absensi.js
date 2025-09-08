@@ -1,26 +1,24 @@
-// === Konfigurasi API Web App Google Apps Script ===
-const API_URL = "https://script.google.com/macros/s/AKfycbwnf3IcLzgMNXFGAYF8NK4B9rRqd9HkXFuMXFi9de_F0g1GB2KpOq0OS08elQZMBF02nQ/exec"; // ganti dengan URL Web App kamu
-const PANITIA_PASSWORD = "panitia123";   // harus sama dengan di Apps Script (code.gs/absensi.gs)
+// === Konfigurasi Password Panitia ===
+const PANITIA_PASSWORD = "panitia123";   // harus sama dengan di Apps Script
 
 let selectedLapak = null;
 let selectedNama = null;
 
-// === Buka modal password absensi ===
+// === Modal Absensi ===
 function openAbsensiModal(noLapak, nama) {
+  console.log("🔐 Buka modal absensi:", noLapak, nama);
   selectedLapak = noLapak;
   selectedNama = nama;
-  document.getElementById("absensiInfo").innerText =
-    `Lapak ${noLapak} - ${nama}`;
+  document.getElementById("absensiInfo").innerText = `Lapak ${noLapak} - ${nama}`;
   document.getElementById("absensiPassword").value = "";
   document.getElementById("absensiModal").style.display = "block";
 }
 
-// === Tutup modal password absensi ===
 function closeAbsensiModal() {
   document.getElementById("absensiModal").style.display = "none";
 }
 
-// === Konfirmasi Absensi ===
+// === Kirim Absensi ===
 async function confirmAbsensi() {
   const inputPassword = document.getElementById("absensiPassword").value;
 
@@ -40,6 +38,8 @@ async function confirmAbsensi() {
     nama: selectedNama
   };
 
+  console.log("📤 Kirim payload absensi:", payload);
+
   try {
     const res = await fetch(`${API_URL}?function=doPostAbsensi`, {
       method: "POST",
@@ -48,12 +48,14 @@ async function confirmAbsensi() {
     });
 
     const data = await res.json();
+    console.log("📥 Respon absensi:", data);
+
     if (data.success) {
       alert(`✅ Absensi berhasil dicatat untuk ${selectedNama}`);
       closeAbsensiModal();
       closeDetailModal();
 
-      // opsional: ubah warna kotak lapak jadi hijau tanda sudah absen
+      // ubah warna lapak jadi hijau
       const lapakBox = document.querySelector(`.lapak[data-no='${selectedLapak}']`);
       if (lapakBox) {
         lapakBox.classList.add("absen-sudah");
@@ -66,8 +68,7 @@ async function confirmAbsensi() {
   }
 }
 
-// === Integrasi dengan tombol di detail modal ===
-// Fungsi ini dipanggil setelah modal detail dibuka
+// === Pasang onclick Absensi di modal detail ===
 function setupAbsensiButton(noLapak, nama) {
   const btnAbsensi = document.getElementById("btnAbsensi");
   btnAbsensi.onclick = function () {
