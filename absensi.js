@@ -1,16 +1,16 @@
 // === Modal Absensi ===
-function openAbsensiModal(lapakId, lapakName) {
+function openAbsensiModal(lapakNo, namaPelapak) {
   const modal = document.getElementById("absensiModal");
   const info = document.getElementById("absensiInfo");
   const passInput = document.getElementById("absensiPassword");
 
   if (info) {
-    info.textContent = `Absensi untuk Lapak ${lapakId} - ${lapakName}`;
+    info.textContent = `Absensi untuk Lapak ${lapakNo} - ${namaPelapak}`;
   }
 
   // simpan data lapak di atribut modal
-  modal.dataset.lapakId = lapakId;
-  modal.dataset.lapakName = lapakName;
+  modal.dataset.lapakNo = lapakNo;
+  modal.dataset.namaPelapak = namaPelapak;
 
   // reset input password
   if (passInput) passInput.value = "";
@@ -23,11 +23,10 @@ function closeAbsensiModal() {
 }
 
 // === Konfirmasi Absensi ===
-// === Konfirmasi Absensi ===
 async function confirmAbsensi() {
   const modal = document.getElementById("absensiModal");
-  const lapakId = modal.dataset.lapakId;
-  const lapakName = modal.dataset.lapakName;
+  const lapakNo = modal.dataset.lapakNo;
+  const namaPelapak = modal.dataset.namaPelapak;
   const password = document.getElementById("absensiPassword").value;
 
   if (!password) {
@@ -42,17 +41,22 @@ async function confirmAbsensi() {
         "Content-Type": "application/json" // ✅ kirim JSON
       },
       body: JSON.stringify({
-        action: "absen",   // ✅ backend siap terima ini
-        noLapak: lapakId,
+        action: "absen",
+        noLapak: lapakNo,
         password: password
       })
     });
 
     const result = await response.json();
-    alert(result.message || "✅ Absensi berhasil");
+    alert(result.message || `✅ Absensi berhasil untuk Lapak ${lapakNo} - ${namaPelapak}`);
 
     closeAbsensiModal();
     closeDetailModal();
+
+    // 🔄 Refresh grid biar warna/status lapak terupdate
+    if (typeof loadData === "function") {
+      loadData();
+    }
   } catch (err) {
     console.error("Error absensi:", err);
     alert("❌ Gagal menyimpan absensi.");
