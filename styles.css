@@ -57,10 +57,26 @@ main {
 }
 
 /* === Grid Lapak (perbaikan responsif) === */
+/* === Grid Lapak (perbaikan responsif) === */
 .grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr); /* default desktop */
   gap: 15px;
+}
+
+/* Laptop / tablet besar */
+@media (max-width: 1200px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Tablet / HP besar */
+@media (max-width: 768px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* HP kecil */
+@media (max-width: 480px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 .lapak {
