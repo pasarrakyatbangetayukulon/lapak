@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monitoring Pelapak</title>
+  <title>📊 Monitoring Pelapak</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-  
+
 <body>
+  <!-- Header -->
   <header>
     <h1>📊 Monitoring Lapak</h1>
   </header>
 
+  <!-- Main -->
   <main>
     <!-- Loading Spinner -->
-    <div id="loading" class="loading-overlay" style="display:none;">
+    <div id="loading" class="loading-overlay">
       <div class="loading-box">
         <div class="spinner"></div>
         <p class="loading-text" id="loadingText">Sedang memuat data...</p>
@@ -23,24 +24,26 @@
     </div>
 
     <!-- Toolbar -->
-     <div class="toolbar">
-   <input type="text" id="searchInput" placeholder="🔎 Cari nomor atau nama lapak...">
-<select id="filterSelect">
-  <option value="all">📌 Semua Status</option>
-  <option value="kosong">✅ Kosong</option>
-  <option value="terisi">❌ Terisi</option>
-</select>
-<select id="rangeSelect">
-  <option value="all"># Pilih Nomor Lapak</option>
-</select>
-<select id="pageSizeSelect">
-  <option value="10">10 / halaman</option>
-  <option value="20">20 / halaman</option>
-  <option value="50">50 / halaman</option>
-  <option value="all" selected>📄 Tampilkan Semua</option>
-</select>
-  </div>
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="🔎 Cari nomor atau nama lapak...">
 
+      <select id="filterSelect">
+        <option value="all">📌 Semua Status</option>
+        <option value="kosong">✅ Kosong</option>
+        <option value="terisi">❌ Terisi</option>
+      </select>
+
+      <select id="rangeSelect">
+        <option value="all"># Pilih Nomor Lapak</option>
+      </select>
+
+      <select id="pageSizeSelect">
+        <option value="10">10 / halaman</option>
+        <option value="20">20 / halaman</option>
+        <option value="50">50 / halaman</option>
+        <option value="all" selected>📄 Tampilkan Semua</option>
+      </select>
+    </div>
 
     <!-- Grid Lapak -->
     <section>
@@ -49,21 +52,35 @@
     </section>
   </main>
 
-  <!-- Modal Form Request -->
-  <div class="modal" id="requestModal" style="display:none;">
+  <!-- Modal Detail -->
+  <div id="detailModal" class="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-      <h2>Form Request Pergantian Pelapak</h2>
+      <span class="close-btn" onclick="closeDetailModal()">&times;</span>
+      <h2 id="detailTitle">Detail Lapak</h2>
+      <div id="detailBody"></div>
+      <div class="form-actions">
+        <button id="btnAbsensi" class="btn-absensi">✅ Absensi</button>
+        <button id="btnRequest" class="btn-request">🔄 Request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Request -->
+  <div class="modal" id="requestModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeRequestModal()">&times;</span>
+      <h2>📝 Form Request Pergantian Pelapak</h2>
+
       <form id="requestForm">
-        <input type="text" id="nama" placeholder="Masukkan Nama Panitia" required />
-        <input type="text" id="lapakLama" placeholder="Nomor & Nama Lapak Lama (misal: 185 - Aseh)" readonly />
-        <input type="text" id="lapakBaru" placeholder="Nomor & Nama Lapak Baru (misal: 185 - Aseh)" required />
+        <input type="text" id="nama" placeholder="Masukkan Nama Panitia" required>
+        <input type="text" id="lapakLama" placeholder="Nomor & Nama Lapak Lama" readonly>
+        <input type="text" id="lapakBaru" placeholder="Nomor & Nama Lapak Baru" required>
         <textarea id="alasan" placeholder="Tuliskan alasan pergantian..." required></textarea>
-        <input type="password" id="password" placeholder="Password Panitia" required />
+        <input type="password" id="password" placeholder="Password Panitia" required>
 
         <div class="form-actions">
-          <button type="submit" id="submitBtn">Kirim</button>
-          <button type="button" onclick="closeModal()">Batal</button>
+          <button type="submit" id="submitBtn">✅ Kirim</button>
+          <button type="button" onclick="closeRequestModal()">❌ Batal</button>
         </div>
       </form>
     </div>
@@ -72,8 +89,7 @@
   <!-- Toast Notification -->
   <div id="toast" class="toast"></div>
 
-  <!-- Script harus di bawah -->
+  <!-- Script -->
   <script src="app.js"></script>
 </body>
-
 </html>
