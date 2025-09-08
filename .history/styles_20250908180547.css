@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f5f6fa;
+}
+
+header {
+    background: #2d3436;
+    color: #fff;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    background: #0984e3;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #74b9ff;
+}
+
+.stall-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.stall-card {
+    background: white;
+    border-radius: 8px;
+    padding: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.stall-card.empty {
+    background: #dfe6e9;
+    color: #636e72;
+}
+
+.stall-card strong {
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Table */
+#requestTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: white;
+}
+
+#requestTable th,
+#requestTable td {
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+#requestTable th {
+    background: #0984e3;
+    color: white;
+}
+
+/* Modal */
+#requestModal {
+    border: none;
+    border-radius: 8px;
+    padding: 1rem;
+    width: 300px;
+}
+
+#requestForm label {
+    display: block;
+    margin: 0.5rem 0;
+}
+
+#requestForm input,
+#requestForm textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+#requestForm menu {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}

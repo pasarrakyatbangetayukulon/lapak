@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitoring Pelapak</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Monitoring Pelapak</h1>
+    <button id="reload">Muat Ulang</button>
+  </header>
+
+  <main>
+    <!-- Bagian Grid Lapak -->
+    <section>
+      <h2>Grid Lapak</h2>
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="Cari nama / no lapak…" />
+        <label>
+          <input type="checkbox" id="showEmptyOnly" /> Tampilkan yang kosong saja
+        </label>
+      </div>
+      <div id="grid" class="stall-grid"></div>
+    </section>
+
+    <!-- Bagian Tabel Request -->
+    <section>
+      <h2>Daftar Request Pergantian Lapak</h2>
+      <table id="requestTable">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Nama</th>
+            <th>Lapak Lama</th>
+            <th>Lapak Baru</th>
+            <th>Alasan</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal Request -->
+  <dialog id="requestModal">
+    <form id="requestForm" method="dialog">
+      <h2>Request Pergantian Lapak</h2>
+      <label>Nama Pelapak <input id="nama" name="nama" required /></label>
+      <label>Lapak Lama <input id="lapakLama" name="lapakLama" type="number" required /></label>
+      <label>Lapak Baru <input id="lapakBaru" name="lapakBaru" type="number" required /></label>
+      <label>Alasan <textarea id="alasan" name="alasan" required></textarea></label>
+      <menu>
+        <button type="button" id="cancelBtn">Batal</button>
+        <button type="submit">Kirim</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

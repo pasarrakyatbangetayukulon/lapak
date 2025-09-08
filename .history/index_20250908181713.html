@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoring Pelapak</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>📊 Monitoring Lapak</h1>
+    </header>
+
+    <main>
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <input type="text" id="searchInput" placeholder="🔎 Cari nama atau nomor lapak...">
+            <select id="filterSelect">
+                <option value="all">Semua</option>
+                <option value="kosong">Kosong</option>
+                <option value="terisi">Terisi</option>
+            </select>
+        </div>
+
+        <!-- Grid Lapak -->
+        <section>
+            <div class="grid" id="lapakGrid"></div>
+        </section>
+    </main>
+
+    <!-- Modal Form Request -->
+    <div class="modal" id="requestModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3>Form Request Pindah Lapak</h3>
+            <form id="requestForm">
+                <label>Nama</label>
+                <input type="text" id="nama" required>
+
+                <label>Lapak Lama</label>
+                <input type="text" id="lapakLama" readonly>
+
+                <label>Lapak Baru</label>
+                <input type="text" id="lapakBaru" required>
+
+                <label>Alasan</label>
+                <textarea id="alasan" required></textarea>
+
+                <label>Password Panitia</label>
+                <input type="password" id="password" required>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Kirim</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                </div>
+            </form>
+            <p id="responseMsg"></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
