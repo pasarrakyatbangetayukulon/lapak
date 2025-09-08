@@ -113,13 +113,10 @@ function renderGrid() {
     const div = document.createElement("div");
     div.className = "lapak " + status;
     div.innerHTML = `
-      <strong>${no}</strong><br>${nama}
-      <div class="btn-group">
-        <button class="btn-detail" onclick="openDetailModal(${no}, '${nama.replace(/'/g, "\\'")}')">
-          🔍 Detail
-        </button>
-      </div>
+      <div class="nomor">${no}</div>
+      <div class="nama">${nama}</div>
     `;
+    div.onclick = () => openDetailModal(no, nama);
     grid.appendChild(div);
   });
 
