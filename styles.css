@@ -148,6 +148,7 @@ form textarea {
     resize: vertical;
     min-height: 60px;
 }
+
 .loading, .error, .no-data {
     grid-column: 1/-1;
     text-align: center;
@@ -157,6 +158,16 @@ form textarea {
 }
 .error { color: red; }
 .no-data { color: #888; }
+
+/* Loading Spinner */
+.loading {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #333;
+    margin: 20px 0;
+}
 
 /* Buttons */
 .btn {
@@ -198,6 +209,29 @@ form textarea {
     font-size: 0.9rem;
 }
 
+/* Pagination */
+.pagination {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.pagination button {
+  padding: 6px 12px;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
 /* 📱 Responsif */
 @media (max-width: 768px) {
     header h1 {
@@ -220,6 +254,21 @@ form textarea {
     .modal-content {
         padding: 20px;
     }
+
+    .pagination {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .pagination button {
+        width: 100%;
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+
+    .loading {
+        font-size: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -239,5 +288,14 @@ form textarea {
     .btn {
         font-size: 0.8rem;
         padding: 8px 12px;
+    }
+
+    .pagination button {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+
+    .loading {
+        font-size: 0.9rem;
     }
 }
