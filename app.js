@@ -8,6 +8,7 @@ let pageSize = Infinity; // ✅ default: tampil semua data
 let loadingInterval;
 
 // === Load Data dari Backend ===
+// === Load Data dari Backend (versi aman) ===
 async function loadData() {
   try {
     showLoading(true);
@@ -23,25 +24,38 @@ async function loadData() {
     let data;
     try {
       data = JSON.parse(text);
+      console.log("✅ Data dari API:", data);
     } catch (err) {
-      console.error("JSON parse error:", err, text);
+      console.error("❌ JSON parse error:", err, text);
       showToast("Respon server tidak valid", "error");
       return;
     }
 
-    lapakData = data;
-    pageSize = lapakData.length;
-    document.getElementById("pageSizeSelect").value = "all";
+    // 🔒 Pastikan lapakData selalu array
+    if (Array.isArray(data)) {
+      lapakData = data;
+    } else if (data && Array.isArray(data.data)) {
+      lapakData = data.data;
+    } else {
+      console.warn("Format data API tidak sesuai:", data);
+      lapakData = [];
+    }
+
+    // kalau kosong, jangan error
+    pageSize = lapakData.length || 1;
+    const pageSizeSelect = document.getElementById("pageSizeSelect");
+    if (pageSizeSelect) pageSizeSelect.value = "all";
 
     generateRangeOptions();
     renderGrid();
   } catch (err) {
-    console.error("Fetch error:", err);
+    console.error("❌ Fetch error:", err);
     showToast("Terjadi kesalahan koneksi!", "error");
   } finally {
     showLoading(false);
   }
 }
+
 
 // === Loading Spinner ===
 function showLoading(show) {
