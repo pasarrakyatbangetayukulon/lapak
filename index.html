@@ -55,17 +55,23 @@
   </main>
 
   <!-- Modal Detail -->
-  <div id="detailModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeDetailModal()">&times;</span>
-      <h2 id="detailTitle">Detail Lapak</h2>
-      <div id="detailBody"></div>
-      <div class="form-actions">
-        <button id="btnAbsensi" class="btn-absensi">✅ Absensi</button>
-        <button id="btnRequest" class="btn-request">🔄 Request</button>
-      </div>
+<!-- Modal Detail -->
+<div id="detailModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeDetailModal()">&times;</span>
+    
+    <!-- ✅ WAJIB ADA -->
+    <h2 id="detailTitle">Detail Lapak</h2>
+    <div id="detailBody"></div>
+
+    <!-- ✅ Tombol Absensi & Request -->
+    <div class="form-actions">
+      <button id="btnAbsensi" class="btn-absensi">✅ Absensi</button>
+      <button id="btnRequest" class="btn-request">🔄 Request</button>
     </div>
   </div>
+</div>
+
 
   <!-- Modal Password Absensi -->
   <div class="modal" id="absensiModal">
