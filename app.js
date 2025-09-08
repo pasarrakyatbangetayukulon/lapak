@@ -184,10 +184,21 @@ function openDetailModal(no, nama) {
   selectedLapak = no;
   const modal = document.getElementById("detailModal");
   modal.querySelector("#detailTitle").textContent = `Lapak ${no} - ${nama}`;
-  modal.querySelector("#btnAbsensi").onclick = () => openAbsensiModal(no, nama);
-  modal.querySelector("#btnRequest").onclick = () => openRequestModal(no, nama);
+
+  // ✅ pastikan tombol absensi dan request dipasang di sini
+  const btnAbsensi = modal.querySelector("#btnAbsensi");
+  const btnRequest = modal.querySelector("#btnRequest");
+
+  if (btnAbsensi) {
+    btnAbsensi.onclick = () => openAbsensiModal(no, nama);
+  }
+  if (btnRequest) {
+    btnRequest.onclick = () => openRequestModal(no, nama);
+  }
+
   modal.style.display = "flex";
 }
+
 
 function closeDetailModal() {
   document.getElementById("detailModal").style.display = "none";
@@ -342,6 +353,9 @@ document.getElementById("pageSizeSelect").addEventListener("change", (e) => {
   currentPage = 1;
   renderGrid();
 });
+document.getElementById("loading").style.display = "flex";
+// setelah selesai
+document.getElementById("loading").style.display = "none";
 
 // === Init ===
 loadData();
