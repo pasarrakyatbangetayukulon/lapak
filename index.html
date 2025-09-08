@@ -14,7 +14,7 @@
 
   <main>
     <!-- Loading Spinner -->
-    <div id="loading" class="loading-overlay">
+    <div id="loading" class="loading-overlay" style="display:none;">
       <div class="loading-box">
         <div class="spinner"></div>
         <p class="loading-text" id="loadingText">Sedang memuat data...</p>
@@ -46,14 +46,14 @@
   </main>
 
   <!-- Modal Form Request -->
-  <div class="modal" id="requestModal">
+  <div class="modal" id="requestModal" style="display:none;">
     <div class="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
       <h2>Form Request Pergantian Pelapak</h2>
       <form id="requestForm">
         <input type="text" id="nama" placeholder="Masukkan Nama Panitia" required />
         <input type="text" id="lapakLama" placeholder="Nomor & Nama Lapak Lama (misal: 185 - Aseh)" readonly />
-        <input type="text" id="lapakBaru" placeholder="Nomor Lapak Baru" required />
+        <input type="text" id="lapakBaru" placeholder="Nomor & Nama Lapak Baru (misal: 185 - Aseh)" required />
         <textarea id="alasan" placeholder="Tuliskan alasan pergantian..." required></textarea>
         <input type="password" id="password" placeholder="Password Panitia" required />
 
@@ -68,6 +68,7 @@
   <!-- Toast Notification -->
   <div id="toast" class="toast"></div>
 
+  <!-- Script harus di bawah -->
   <script src="app.js"></script>
 </body>
 
