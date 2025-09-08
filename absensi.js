@@ -1,21 +1,20 @@
 // === Konfigurasi ===
-const API_URL = "https://script.google.com/macros/s/AKfycbwnf3IcLzgMNXFGAYF8NK4B9rRqd9HkXFuMXFi9de_F0g1GB2KpOq0OS08elQZMBF02nQ/exec";
-
 const PANITIA_PASSWORD = "panitia123";   // harus sama dengan di Apps Script
 
 let selectedLapak = null;
 let selectedNama = null;
 
-// === Modal Absensi ===
+// === Buka Modal Absensi ===
 function openAbsensiModal(noLapak, nama) {
   console.log("🔐 Buka modal absensi:", noLapak, nama);
   selectedLapak = noLapak;
   selectedNama = nama;
   document.getElementById("absensiInfo").innerText = `Lapak ${noLapak} - ${nama}`;
   document.getElementById("absensiPassword").value = "";
-  document.getElementById("absensiModal").style.display = "block";
+  document.getElementById("absensiModal").style.display = "flex"; // ✅ gunakan flex biar modal muncul
 }
 
+// === Tutup Modal Absensi ===
 function closeAbsensiModal() {
   document.getElementById("absensiModal").style.display = "none";
 }
@@ -23,18 +22,20 @@ function closeAbsensiModal() {
 // === Kirim Absensi ===
 async function confirmAbsensi() {
   const inputPassword = document.getElementById("absensiPassword").value;
+  const btns = document.querySelectorAll("#absensiModal .form-actions button");
 
   if (!inputPassword) {
-    alert("⚠️ Password wajib diisi!");
+    showToast("⚠️ Password wajib diisi!", "error");
     return;
   }
 
   if (inputPassword !== PANITIA_PASSWORD) {
-    alert("❌ Password salah!");
+    showToast("❌ Password salah!", "error");
     return;
   }
 
   const payload = {
+    action: "absen",
     password: PANITIA_PASSWORD,
     noLapak: selectedLapak,
     nama: selectedNama
@@ -43,7 +44,15 @@ async function confirmAbsensi() {
   console.log("📤 Kirim payload absensi:", payload);
 
   try {
-    const res = await fetch(`${API_URL}?function=doPostAbsensi`, {
+    // ⏳ Tampilkan loading pada tombol
+    btns.forEach(btn => {
+      btn.disabled = true;
+      if (btn.textContent.includes("Konfirmasi")) {
+        btn.textContent = "⏳ Memproses...";
+      }
+    });
+
+    const res = await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: { "Content-Type": "application/json" }
@@ -53,7 +62,7 @@ async function confirmAbsensi() {
     console.log("📥 Respon absensi:", data);
 
     if (data.success) {
-      alert(`✅ Absensi berhasil dicatat untuk ${selectedNama}`);
+      showToast(`✅ Absensi berhasil dicatat untuk ${selectedNama}`, "success");
       closeAbsensiModal();
       closeDetailModal();
 
@@ -63,17 +72,27 @@ async function confirmAbsensi() {
         lapakBox.classList.add("absen-sudah");
       }
     } else {
-      alert(`⚠️ ${data.message}`);
+      showToast(`⚠️ ${data.message}`, "error");
     }
   } catch (err) {
-    alert("❌ Error: " + err.message);
+    showToast("❌ Error: " + err.message, "error");
+  } finally {
+    // ✅ Kembalikan tombol normal
+    btns.forEach(btn => {
+      btn.disabled = false;
+      if (btn.textContent.includes("Memproses")) {
+        btn.textContent = "✅ Konfirmasi";
+      }
+    });
   }
 }
 
 // === Pasang onclick Absensi di modal detail ===
 function setupAbsensiButton(noLapak, nama) {
   const btnAbsensi = document.getElementById("btnAbsensi");
-  btnAbsensi.onclick = function () {
-    openAbsensiModal(noLapak, nama);
-  };
+  if (btnAbsensi) {
+    btnAbsensi.onclick = function () {
+      openAbsensiModal(noLapak, nama);
+    };
+  }
 }
