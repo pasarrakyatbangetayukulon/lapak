@@ -44,10 +44,48 @@ async function confirmAbsensi() {
     const result = await response.json();
     alert(result.message || "✅ Absensi berhasil");
 
+    if (result.success) {
+      // disable tombol absensi di UI
+      const btn = document.querySelector(`button[data-lapak-id="${lapakId}"]`);
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Sudah Absen";
+      }
+    }
+
     closeAbsensiModal();
     closeDetailModal();
   } catch (err) {
     console.error("Error absensi:", err);
     alert("❌ Gagal menyimpan absensi.");
   }
+}
+
+// === Render Grid Lapak dengan status absensi ===
+function renderGrid(lapakData) {
+  const container = document.getElementById("lapakGrid");
+  container.innerHTML = "";
+
+  lapakData.forEach(lapak => {
+    const card = document.createElement("div");
+    card.className = "lapak-card";
+
+    const title = document.createElement("h3");
+    title.textContent = `Lapak ${lapak.no} - ${lapak.nama}`;
+    card.appendChild(title);
+
+    const btnAbsensi = document.createElement("button");
+    btnAbsensi.dataset.lapakId = lapak.no;
+
+    if (lapak.sudahAbsen) {
+      btnAbsensi.disabled = true;
+      btnAbsensi.textContent = "Sudah Absen";
+    } else {
+      btnAbsensi.textContent = "Absensi";
+      btnAbsensi.onclick = () => openAbsensiModal(lapak.no, lapak.nama);
+    }
+
+    card.appendChild(btnAbsensi);
+    container.appendChild(card);
+  });
 }
