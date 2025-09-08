@@ -4,7 +4,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwnf3IcLzgMNXFGAYF8NK4B
 let lapakData = [];
 let selectedLapak = "";
 let currentPage = 1;
-let pageSize = "all"; // ✅ default tampil semua
+let pageSize = Infinity; // ✅ default: tampil semua data
 
 // === Load Data dari Backend ===
 async function loadData() {
@@ -14,11 +14,9 @@ async function loadData() {
         const data = await res.json();
         lapakData = data;
 
-        // Kalau default "all", set pageSize ke jumlah lapak
-        if (pageSize === "all") {
-            pageSize = lapakData.length;
-            document.getElementById("pageSizeSelect").value = "all";
-        }
+        // Default: tampil semua
+        pageSize = lapakData.length;
+        document.getElementById("pageSizeSelect").value = "all";
 
         // Buat dropdown range otomatis
         generateRangeOptions();
@@ -31,6 +29,11 @@ async function loadData() {
     }
 }
 
+// === Loading Spinner ===
+function showLoading(show) {
+    const loader = document.getElementById("loading");
+    loader.style.display = show ? "flex" : "none";
+}
 
 // === Generate Range Dropdown ===
 function generateRangeOptions() {
