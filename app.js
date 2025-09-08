@@ -319,23 +319,17 @@ function closeAbsensiModal() {
 
 // === Rekap Absensi ===
 async function loadRekap() {
-  try {
-    const res = await fetch(`${API_URL}?action=rekap`);
-    const data = await res.json();
+  const res = await fetch(`${API_URL}?action=rekap`);
+  const data = await res.json();
 
-    if (!data.success) {
-      console.error("Rekap gagal:", data.message);
-      return;
-    }
-
-    const tbody = document.querySelector("#rekapTable tbody");
-    if (!tbody) return;
-
+  if (data.success) {
+    const tbody = document.querySelector("#absensiTable tbody");
     tbody.innerHTML = "";
+
     data.data.forEach(row => {
       const tr = document.createElement("tr");
       if (row.warning) {
-        tr.style.backgroundColor = "#f8d7da"; // merah muda warning
+        tr.classList.add("warning");
       }
       tr.innerHTML = `
         <td>${row.noLapak}</td>
