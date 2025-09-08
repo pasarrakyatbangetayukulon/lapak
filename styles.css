@@ -188,6 +188,14 @@ form textarea {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+/* Loading Text */
+.loading-text {
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #333;
+  text-align: center;
+  font-weight: 500;
+}
 
 /* Buttons */
 .btn {
@@ -310,4 +318,16 @@ form textarea {
         font-size: 0.8rem;
         padding: 6px 10px;
     }
+}
+/* 📱 Responsif */
+@media (max-width: 768px) {
+  .loading-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-text {
+    font-size: 0.8rem;
+  }
 }
