@@ -12,12 +12,16 @@ body {
   line-height: 1.4;
 }
 
-/* Header */
+/* Header Sticky */
 header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   background: #2c3e50;
   color: #fff;
   padding: 15px 20px;
   text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 header h1 {
   font-size: 1.8rem;
@@ -30,12 +34,17 @@ main {
   margin: auto;
 }
 
-/* Toolbar */
+/* Toolbar Sticky */
 .toolbar {
+  position: sticky;
+  top: 60px; /* sesuaikan tinggi header */
+  background: #f4f6f9;
+  z-index: 999;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;
 }
 .toolbar input,
 .toolbar select {
@@ -225,7 +234,20 @@ main {
 
 @media (max-width: 768px) {
   header h1 { font-size: 1.4rem; }
-  .toolbar { flex-direction: column; }
+
+  /* Toolbar mobile */
+  .toolbar {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .toolbar input,
+  .toolbar select {
+    width: 100%;
+    min-width: unset;
+    font-size: 1rem;
+    padding: 12px;
+  }
+
   .grid { grid-template-columns: repeat(3, 1fr); }
   .lapak { font-size: 0.85rem; padding: 12px; }
   .modal-content { padding: 1.5rem; }
@@ -239,6 +261,14 @@ main {
   .grid { grid-template-columns: repeat(2, 1fr); }
   .lapak { font-size: 0.8rem; padding: 10px; }
   .modal-content { padding: 1rem; }
+
+  /* Toolbar lebih nyaman */
+  .toolbar input,
+  .toolbar select {
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+
   .btn, .form-actions button {
     font-size: 0.85rem; padding: 0.6rem;
   }
