@@ -177,25 +177,51 @@ function renderPagination(totalPages) {
   };
   nav.appendChild(nextBtn);
 }
-// === Modal Detail (PATCH) ===
-function openDetailModal(no, nama) {
-  selectedLapak = no;
+
+// === Buka Modal Detail Lapak ===
+function openDetailModal(lapak) {
   const modal = document.getElementById("detailModal");
-  modal.querySelector("#detailTitle").textContent = `Lapak ${no} - ${nama}`;
+  const title = document.getElementById("detailTitle");
+  const body = document.getElementById("detailBody");
+  const btnAbsensi = document.getElementById("btnAbsensi");
+  const btnRequest = document.getElementById("btnRequest");
 
-  const btnAbsensi = modal.querySelector("#btnAbsensi");
-  const btnRequest = modal.querySelector("#btnRequest");
+  if (title) {
+    title.textContent = `Detail Lapak ${lapak.noLapak}`;
+  }
 
-  if (btnAbsensi) btnAbsensi.onclick = () => openAbsensiModal(no, nama);   // ✅ nempel
-  if (btnRequest) btnRequest.onclick = () => openRequestModal(no, nama);   // ✅ nempel
+  if (body) {
+    body.innerHTML = `
+      <p><b>Nomor:</b> ${lapak.noLapak}</p>
+      <p><b>Nama:</b> ${lapak.nama}</p>
+      <p><b>Status:</b> ${lapak.status}</p>
+    `;
+  }
 
-  modal.style.display = "flex";
+  if (btnAbsensi) {
+    // Panggil absensi.js
+    btnAbsensi.onclick = () => openAbsensiModal(lapak.noLapak, lapak.nama);
+  }
+
+  if (btnRequest) {
+    // Buka modal request
+    btnRequest.onclick = () => {
+      document.getElementById("lapakLama").value = `${lapak.noLapak} - ${lapak.nama}`;
+      document.getElementById("lapakBaru").value = "";
+      document.getElementById("alasan").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("requestModal").style.display = "block";
+    };
+  }
+
+  modal.style.display = "block";
 }
 
-
+// === Tutup Modal Detail ===
 function closeDetailModal() {
   document.getElementById("detailModal").style.display = "none";
 }
+
 
 // === Modal Request ===
 function openRequestModal(lapakNo, namaPelapak) {
