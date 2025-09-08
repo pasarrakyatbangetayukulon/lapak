@@ -57,7 +57,6 @@ main {
 }
 
 /* === Grid Lapak (perbaikan responsif) === */
-/* === Grid Lapak (perbaikan responsif) === */
 .grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr); /* default desktop */
@@ -97,6 +96,38 @@ main {
 }
 .lapak.kosong { background: #2ecc71; color: #fff; }
 .lapak.terisi { background: #fff; color: #333; }
+
+/* === Button Absensi & Request === */
+.btn-absensi,
+.btn-request {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #fff;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-absensi {
+  background: #28a745; /* hijau */
+}
+.btn-absensi:hover {
+  background: #218838;
+}
+
+.btn-request {
+  background: #007bff; /* biru */
+}
+.btn-request:hover {
+  background: #0069d9;
+}
 
 /* === Modal Modern === */
 .modal {
@@ -242,6 +273,7 @@ main {
   background: #ccc;
   cursor: not-allowed;
 }
+
 /* === Responsif Breakpoints === */
 @media (max-width: 1200px) {
   .grid { grid-template-columns: repeat(4, 1fr); }
@@ -250,18 +282,18 @@ main {
 @media (max-width: 768px) {
   header h1 { font-size: 1.4rem; }
 
-  /* === Toolbar Compact untuk Mobile === */
+  /* Toolbar Compact untuk Mobile */
   .toolbar {
     flex-direction: column;
-    gap: 8px;  /* jarak antar elemen lebih rapat */
+    gap: 8px;
     padding: 8px;
   }
   .toolbar input,
   .toolbar select {
     width: 100%;
     min-width: unset;
-    font-size: 0.9rem;   /* font lebih kecil */
-    padding: 8px;        /* padding lebih kecil */
+    font-size: 0.9rem;
+    padding: 8px;
     border-radius: 5px;
   }
 
@@ -272,6 +304,14 @@ main {
   .pagination { flex-direction: column; gap: 8px; }
   .pagination button { width: 100%; font-size: 0.85rem; }
   .loading-text { font-size: 0.9rem; }
+
+  /* Tombol absensi & request responsif */
+  .btn-absensi,
+  .btn-request {
+    font-size: 0.85rem;
+    padding: 7px 0;
+    border-radius: 5px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -279,7 +319,7 @@ main {
   .lapak { font-size: 0.8rem; padding: 10px; }
   .modal-content { padding: 1rem; }
 
-  /* === Toolbar lebih compact di HP kecil === */
+  /* Toolbar lebih compact di HP kecil */
   .toolbar {
     gap: 6px;
     padding: 6px;
@@ -297,4 +337,12 @@ main {
     font-size: 0.8rem; padding: 6px 10px;
   }
   .loading-text { font-size: 0.8rem; }
+
+  /* Tombol absensi & request lebih kecil */
+  .btn-absensi,
+  .btn-request {
+    font-size: 0.8rem;
+    padding: 6px 0;
+    border-radius: 5px;
+  }
 }
