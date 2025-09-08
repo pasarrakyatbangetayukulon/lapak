@@ -191,6 +191,10 @@ main {
   from { opacity: 0; transform: scale(0.95); }
   to   { opacity: 1; transform: scale(1); }
 }
+.lapak.absen-sudah {
+  background-color: #4caf50; /* hijau */
+  color: white;
+}
 
 /* Form Actions */
 .form-actions {
