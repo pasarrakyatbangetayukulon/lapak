@@ -19,18 +19,6 @@ function closeAbsensiModal() {
   document.getElementById("absensiModal").style.display = "none";
 }
 
-// === Toast Notification ===
-function showToast(message, success = true) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.style.background = success ? "#2ecc71" : "#e74c3c"; // hijau / merah
-  toast.classList.add("show");
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 3000);
-}
-
 // === Konfirmasi Absensi ===
 async function confirmAbsensi() {
   const modal = document.getElementById("absensiModal");
@@ -38,15 +26,9 @@ async function confirmAbsensi() {
   const password = document.getElementById("absensiPassword").value;
 
   if (!password) {
-    showToast("⚠️ Masukkan password panitia!", false);
+    alert("⚠️ Masukkan password panitia!");
     return;
   }
-
-  // tombol loading
-  const btn = document.querySelector(`button[data-lapak-id="${lapakId}"]`);
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.innerHTML = `<span class="spinner"></span> Proses...`;
 
   try {
     const response = await fetch(API_URL, {
@@ -60,24 +42,22 @@ async function confirmAbsensi() {
     });
 
     const result = await response.json();
+    alert(result.message || "✅ Absensi berhasil");
 
     if (result.success) {
-      btn.textContent = "Sudah Absen";
-      showToast(result.message || "✅ Absensi berhasil", true);
-    } else {
-      btn.disabled = false;
-      btn.textContent = originalText;
-      showToast(result.message || "❌ Gagal absensi", false);
+      // disable tombol absensi di UI
+      const btn = document.querySelector(`button[data-lapak-id="${lapakId}"]`);
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Sudah Absen";
+      }
     }
 
     closeAbsensiModal();
     closeDetailModal();
-
   } catch (err) {
     console.error("Error absensi:", err);
-    btn.disabled = false;
-    btn.textContent = originalText;
-    showToast("❌ Terjadi kesalahan koneksi", false);
+    alert("❌ Gagal menyimpan absensi.");
   }
 }
 
