@@ -1,4 +1,6 @@
 // === Konfigurasi ===
+const API_URL = "https://script.google.com/macros/s/AKfycbwnf3IcLzgMNXFGAYF8NK4B9rRqd9HkXFuMXFi9de_F0g1GB2KpOq0OS08elQZMBF02nQ/exec";
+
 const PANITIA_PASSWORD = "panitia123";   // harus sama dengan di Apps Script
 
 let selectedLapak = null;
