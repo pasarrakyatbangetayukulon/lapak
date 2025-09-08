@@ -179,7 +179,7 @@ function renderPagination(totalPages) {
 }
 
 // === Buka Modal Detail Lapak ===
-function openDetailModal(noLapak, nama, status = "") {
+function openDetailModal(lapak) {
   const modal = document.getElementById("detailModal");
   const title = document.getElementById("detailTitle");
   const body = document.getElementById("detailBody");
@@ -187,24 +187,24 @@ function openDetailModal(noLapak, nama, status = "") {
   const btnRequest = document.getElementById("btnRequest");
 
   if (title) {
-    title.textContent = `Detail Lapak ${noLapak}`;
+    title.textContent = `Detail Lapak ${lapak.noLapak}`;
   }
 
   if (body) {
     body.innerHTML = `
-      <p><b>Nomor:</b> ${noLapak}</p>
-      <p><b>Nama:</b> ${nama}</p>
-      <p><b>Status:</b> ${status}</p>
+      <p><b>Nomor:</b> ${lapak.noLapak}</p>
+      <p><b>Nama:</b> ${lapak.nama}</p>
+      <p><b>Status:</b> ${lapak.status}</p>
     `;
   }
 
   if (btnAbsensi) {
-    btnAbsensi.onclick = () => openAbsensiModal(noLapak, nama);
+    btnAbsensi.onclick = () => openAbsensiModal(lapak.noLapak, lapak.nama);
   }
 
   if (btnRequest) {
     btnRequest.onclick = () => {
-      document.getElementById("lapakLama").value = `${noLapak} - ${nama}`;
+      document.getElementById("lapakLama").value = `${lapak.noLapak} - ${lapak.nama}`;
       document.getElementById("lapakBaru").value = "";
       document.getElementById("alasan").value = "";
       document.getElementById("password").value = "";
