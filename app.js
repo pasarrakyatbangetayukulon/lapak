@@ -129,18 +129,16 @@ function renderGrid() {
   const startIdx = (currentPage - 1) * safePageSize;
   const pageData = filtered.slice(startIdx, startIdx + safePageSize);
 
-  pageData.forEach(({ no, nama, status }) => {
+ pageData.forEach(({ no, nama, status }) => {
     const div = document.createElement("div");
     div.className = "lapak " + status;
-    div.innerHTML = `
-      <strong>${no}</strong><br>${formatNama(nama)}
-    `;
+    div.setAttribute("data-no", no);      // ✅ penting untuk update warna setelah absen
+    div.setAttribute("data-nama", nama);  // optional
+    div.innerHTML = `<strong>${no}</strong><br>${formatNama(nama)}`;
 
-    // 🔒 Cek apakah fungsi modal ada
     if (typeof openDetailModal === "function") {
       div.onclick = () => openDetailModal(no, nama);
     }
-
     grid.appendChild(div);
   });
 
@@ -148,6 +146,7 @@ function renderGrid() {
     renderPagination(totalPages);
   }
 }
+
 
 
 // === Render Pagination Nav ===
@@ -178,23 +177,17 @@ function renderPagination(totalPages) {
   };
   nav.appendChild(nextBtn);
 }
-
-// === Modal Detail ===
+// === Modal Detail (PATCH) ===
 function openDetailModal(no, nama) {
   selectedLapak = no;
   const modal = document.getElementById("detailModal");
   modal.querySelector("#detailTitle").textContent = `Lapak ${no} - ${nama}`;
 
-  // ✅ pastikan tombol absensi dan request dipasang di sini
   const btnAbsensi = modal.querySelector("#btnAbsensi");
   const btnRequest = modal.querySelector("#btnRequest");
 
-  if (btnAbsensi) {
-    btnAbsensi.onclick = () => openAbsensiModal(no, nama);
-  }
-  if (btnRequest) {
-    btnRequest.onclick = () => openRequestModal(no, nama);
-  }
+  if (btnAbsensi) btnAbsensi.onclick = () => openAbsensiModal(no, nama);   // ✅ nempel
+  if (btnRequest) btnRequest.onclick = () => openRequestModal(no, nama);   // ✅ nempel
 
   modal.style.display = "flex";
 }
