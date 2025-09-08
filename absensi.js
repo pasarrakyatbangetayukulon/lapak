@@ -1,20 +1,17 @@
 // === Modal Absensi ===
-function openAbsensiModal(lapakNo, namaPelapak) {
+function openAbsensiModal(lapakId, lapakName) {
   const modal = document.getElementById("absensiModal");
   const info = document.getElementById("absensiInfo");
   const passInput = document.getElementById("absensiPassword");
 
   if (info) {
-    info.textContent = `Absensi untuk Lapak ${lapakNo} - ${namaPelapak}`;
+    info.textContent = `Absensi untuk Lapak ${lapakId} - ${lapakName}`;
   }
 
-  // simpan data lapak di atribut modal
-  modal.dataset.lapakNo = lapakNo;
-  modal.dataset.namaPelapak = namaPelapak;
+  modal.dataset.lapakId = lapakId;
+  modal.dataset.lapakName = lapakName;
 
-  // reset input password
   if (passInput) passInput.value = "";
-
   modal.style.display = "block";
 }
 
@@ -54,4 +51,3 @@ async function confirmAbsensi() {
     alert("❌ Gagal menyimpan absensi.");
   }
 }
-
