@@ -47,12 +47,13 @@ main {
   min-width: 140px;
 }
 
-/* Grid Lapak */
+/* === Grid Lapak (perbaikan responsif) === */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(6, 1fr); /* default desktop */
   gap: 15px;
 }
+
 .lapak {
   padding: 15px;
   border-radius: 10px;
@@ -217,11 +218,15 @@ main {
   cursor: not-allowed;
 }
 
-/* === Responsif === */
+/* === Responsif Breakpoints === */
+@media (max-width: 1200px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
+}
+
 @media (max-width: 768px) {
   header h1 { font-size: 1.4rem; }
   .toolbar { flex-direction: column; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  .grid { grid-template-columns: repeat(3, 1fr); }
   .lapak { font-size: 0.85rem; padding: 12px; }
   .modal-content { padding: 1.5rem; }
   .form-actions { flex-direction: column; }
@@ -229,8 +234,9 @@ main {
   .pagination button { width: 100%; font-size: 0.85rem; }
   .loading-text { font-size: 0.9rem; }
 }
+
 @media (max-width: 480px) {
-  .grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .grid { grid-template-columns: repeat(2, 1fr); }
   .lapak { font-size: 0.8rem; padding: 10px; }
   .modal-content { padding: 1rem; }
   .btn, .form-actions button {
