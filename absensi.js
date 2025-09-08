@@ -25,8 +25,7 @@ function closeAbsensiModal() {
 // === Konfirmasi Absensi ===
 async function confirmAbsensi() {
   const modal = document.getElementById("absensiModal");
-  const lapakNo = modal.dataset.lapakNo;
-  const namaPelapak = modal.dataset.namaPelapak;
+  const lapakId = modal.dataset.lapakId;
   const password = document.getElementById("absensiPassword").value;
 
   if (!password) {
@@ -37,28 +36,22 @@ async function confirmAbsensi() {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json" // ✅ kirim JSON
-      },
-      body: JSON.stringify({
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
         action: "absen",
-        noLapak: lapakNo,
+        noLapak: lapakId,
         password: password
       })
     });
 
     const result = await response.json();
-    alert(result.message || `✅ Absensi berhasil untuk Lapak ${lapakNo} - ${namaPelapak}`);
+    alert(result.message || "✅ Absensi berhasil");
 
     closeAbsensiModal();
     closeDetailModal();
-
-    // 🔄 Refresh grid biar warna/status lapak terupdate
-    if (typeof loadData === "function") {
-      loadData();
-    }
   } catch (err) {
     console.error("Error absensi:", err);
     alert("❌ Gagal menyimpan absensi.");
   }
 }
+
