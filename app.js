@@ -137,7 +137,11 @@ function renderGrid() {
     div.innerHTML = `<strong>${no}</strong><br>${formatNama(nama)}`;
 
     if (typeof openDetailModal === "function") {
-      div.onclick = () => openDetailModal(no, nama);
+   div.onclick = () => openDetailModal({ 
+  noLapak: no, 
+  nama: nama, 
+  status: status 
+});
     }
     grid.appendChild(div);
   });
