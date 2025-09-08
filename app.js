@@ -84,6 +84,7 @@ function generateRangeOptions() {
 }
 
 // === Render Grid Lapak ===
+// === Render Grid Lapak ===
 function renderGrid() {
   const grid = document.getElementById("lapakGrid");
   const search = document.getElementById("searchInput").value.toLowerCase();
@@ -112,16 +113,14 @@ function renderGrid() {
   pageData.forEach(({ no, nama, status }) => {
     const div = document.createElement("div");
     div.className = "lapak " + status;
-    div.innerHTML = `
-      <div class="nomor">${no}</div>
-      <div class="nama">${nama}</div>
-    `;
-    div.onclick = () => openDetailModal(no, nama);
+    div.innerHTML = `<strong>${no}</strong><br>${nama}`;
+    div.onclick = () => openDetailModal(no, nama); // ✅ klik langsung buka modal
     grid.appendChild(div);
   });
 
   renderPagination(totalPages);
 }
+
 
 // === Render Pagination Nav ===
 function renderPagination(totalPages) {
