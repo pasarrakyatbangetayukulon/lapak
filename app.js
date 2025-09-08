@@ -4,13 +4,18 @@ let selectedLapak = "";
 
 // Load data dari backend
 async function loadData() {
+    const grid = document.getElementById("lapakGrid");
+    grid.innerHTML = `<div class="loading">⏳ Loading data...</div>`;
+
     try {
-        const res = await fetch(API_URL);
+        const res = await fetch(API_URL, { cache: "no-store" });
         const data = await res.json();
-        lapakData = data;
+
+        lapakData = Array.isArray(data) ? data : [];
         renderGrid();
     } catch (err) {
         console.error("Gagal load data:", err);
+        grid.innerHTML = `<div class="error">⚠️ Gagal memuat data</div>`;
     }
 }
 
@@ -22,26 +27,29 @@ function renderGrid() {
 
     grid.innerHTML = "";
 
-    lapakData.forEach(({ no, nama, status }) => {
-        // Filter
-        if (filter === "kosong" && status !== "kosong") return;
-        if (filter === "terisi" && status !== "terisi") return;
+    let filtered = lapakData.filter(({ no, nama, status }) => {
+        if (filter === "kosong" && status !== "kosong") return false;
+        if (filter === "terisi" && status !== "terisi") return false;
 
-        // Search
-        if (
-            !no.toLowerCase().includes(search) &&
-            !nama.toLowerCase().includes(search)
-        ) return;
+        return (
+            no.toLowerCase().includes(search) ||
+            nama.toLowerCase().includes(search)
+        );
+    });
 
-        // Buat kartu lapak
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div class="no-data">Tidak ada data ditemukan</div>`;
+        return;
+    }
+
+    filtered.forEach(({ no, nama, status }) => {
         const div = document.createElement("div");
-        div.className = "lapak " + status; // -> class: "lapak kosong" / "lapak terisi"
+        div.className = "lapak " + status;
         div.innerHTML = `<strong>${no}</strong><br>${nama}`;
         div.onclick = () => openModal(no, nama);
         grid.appendChild(div);
     });
 }
-
 
 // Modal
 function openModal(lapakNo, namaPelapak) {
@@ -67,6 +75,10 @@ document.getElementById("requestForm").addEventListener("submit", async (e) => {
         password: document.getElementById("password").value
     };
 
+    const msg = document.getElementById("responseMsg");
+    msg.innerText = "⏳ Mengirim data...";
+    msg.style.color = "black";
+
     try {
         const res = await fetch(API_URL, {
             method: "POST",
@@ -74,7 +86,6 @@ document.getElementById("requestForm").addEventListener("submit", async (e) => {
         });
         const result = await res.json();
 
-        const msg = document.getElementById("responseMsg");
         msg.innerText = result.message;
         msg.style.color = result.success ? "green" : "red";
 
@@ -86,6 +97,8 @@ document.getElementById("requestForm").addEventListener("submit", async (e) => {
         }
     } catch (err) {
         console.error("Gagal kirim request:", err);
+        msg.innerText = "⚠️ Gagal mengirim data!";
+        msg.style.color = "red";
     }
 });
 
@@ -93,4 +106,5 @@ document.getElementById("requestForm").addEventListener("submit", async (e) => {
 document.getElementById("searchInput").addEventListener("input", renderGrid);
 document.getElementById("filterSelect").addEventListener("change", renderGrid);
 
+// Auto load
 loadData();
