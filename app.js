@@ -319,31 +319,32 @@ function closeAbsensiModal() {
 
 // === Rekap Absensi ===
 async function loadRekap() {
-  const res = await fetch(`${API_URL}?action=rekap`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API_URL}?action=rekap`);
+    const data = await res.json();
 
-  if (data.success) {
-    const tbody = document.querySelector("#absensiTable tbody");
-    tbody.innerHTML = "";
+    if (data.success) {
+      const tbody = document.querySelector("#absensiTable tbody");
+      tbody.innerHTML = "";
 
-    data.data.forEach(row => {
-      const tr = document.createElement("tr");
-      if (row.warning) {
-        tr.classList.add("warning");
-      }
-      tr.innerHTML = `
-        <td>${row.noLapak}</td>
-        <td>${row.nama}</td>
-        <td>${row.hadir}</td>
-        <td>${row.tidakHadir}</td>
-        <td>${row.warning ? "⚠️ Warning" : "-"}</td>
-      `;
-      tbody.appendChild(tr);
-    });
+      data.data.forEach(row => {
+        const tr = document.createElement("tr");
+        if (row.warning) tr.classList.add("warning");
+        tr.innerHTML = `
+          <td>${row.noLapak}</td>
+          <td>${row.nama}</td>
+          <td>${row.hadir}</td>
+          <td>${row.tidakHadir}</td>
+          <td>${row.warning ? "⚠️ Warning" : "-"}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
   } catch (err) {
     console.error("Error rekap:", err);
   }
 }
+
 
 // === Event Listeners ===
 document.getElementById("searchInput").addEventListener("input", () => {
