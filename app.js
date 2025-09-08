@@ -5,6 +5,7 @@ let lapakData = [];
 let selectedLapak = "";
 let currentPage = 1;
 let pageSize = Infinity; // ✅ default: tampil semua data
+let loadingInterval;
 
 // === Load Data dari Backend ===
 async function loadData() {
@@ -32,7 +33,20 @@ async function loadData() {
 // === Loading Spinner ===
 function showLoading(show) {
     const loader = document.getElementById("loading");
-    loader.style.display = show ? "flex" : "none";
+    const text = document.getElementById("loadingText");
+
+    if (show) {
+        loader.style.display = "flex";
+        let dots = 0;
+        loadingInterval = setInterval(() => {
+            dots = (dots + 1) % 4; // 0,1,2,3 → balik lagi
+            text.textContent = "Sedang memuat data" + ".".repeat(dots);
+        }, 500);
+    } else {
+        loader.style.display = "none";
+        clearInterval(loadingInterval);
+        text.textContent = "Sedang memuat data"; // reset
+    }
 }
 
 // === Generate Range Dropdown ===
