@@ -353,9 +353,7 @@ document.getElementById("pageSizeSelect").addEventListener("change", (e) => {
   currentPage = 1;
   renderGrid();
 });
-document.getElementById("loading").style.display = "flex";
-// setelah selesai
-document.getElementById("loading").style.display = "none";
+showLoading(true);
 
 // === Init ===
 loadData();
