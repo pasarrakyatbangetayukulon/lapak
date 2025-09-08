@@ -169,7 +169,15 @@ form textarea {
   height: 100%;
   background: rgba(255, 255, 255, 0.8);
   z-index: 9999;
+
+  /* Flexbox untuk pusat layar */
+  display: flex;
   justify-content: center;
+  align-items: center;
+}
+.loading-overlay .loading-box {
+  display: flex;
+  flex-direction: column;   /* spinner di atas, teks di bawah */
   align-items: center;
 }
 
