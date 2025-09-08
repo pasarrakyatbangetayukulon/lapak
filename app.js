@@ -84,14 +84,12 @@ function generateRangeOptions() {
 }
 
 // === Render Grid Lapak ===
-// === Render Grid Lapak (versi aman) ===
 function renderGrid() {
   const grid = document.getElementById("lapakGrid");
   const searchInput = document.getElementById("searchInput");
   const filterSelect = document.getElementById("filterSelect");
   const rangeSelect = document.getElementById("rangeSelect");
 
-  // 🔒 Cek elemen penting
   if (!grid || !searchInput || !filterSelect || !rangeSelect) {
     console.warn("Elemen grid/filter tidak ditemukan di HTML.");
     return;
@@ -103,7 +101,6 @@ function renderGrid() {
 
   grid.innerHTML = "";
 
-  // 🔒 Pastikan lapakData array
   if (!Array.isArray(lapakData)) {
     console.warn("lapakData belum berisi array.");
     return;
@@ -121,9 +118,7 @@ function renderGrid() {
     return true;
   });
 
-  // 🔒 Antisipasi pageSize = 0
   const safePageSize = pageSize > 0 ? pageSize : filtered.length || 1;
-
   const totalPages = Math.ceil(filtered.length / safePageSize);
   if (currentPage > totalPages) currentPage = totalPages || 1;
   const startIdx = (currentPage - 1) * safePageSize;
@@ -135,12 +130,9 @@ function renderGrid() {
     div.innerHTML = `
       <strong>${no}</strong><br>${formatNama(nama)}
     `;
-
-    // 🔒 Cek apakah fungsi modal ada
     if (typeof openDetailModal === "function") {
       div.onclick = () => openDetailModal(no, nama);
     }
-
     grid.appendChild(div);
   });
 
@@ -148,7 +140,6 @@ function renderGrid() {
     renderPagination(totalPages);
   }
 }
-
 
 // === Render Pagination Nav ===
 function renderPagination(totalPages) {
@@ -254,6 +245,7 @@ form.addEventListener("submit", async (e) => {
         closeRequestModal();
         closeDetailModal();
         loadData();
+        loadRekap(); // refresh rekap juga
       }, 1500);
     } else {
       showToast(result.message, "error");
@@ -276,6 +268,7 @@ function showToast(message, type) {
     toast.style.display = "none";
   }, 3000);
 }
+
 // Pisahkan teks dalam tanda kurung biar bisa diwarnai
 function formatNama(nama) {
   return nama.replace(/\((.*?)\)/g, '<span class="inside">($1)</span>');
@@ -324,6 +317,40 @@ function closeAbsensiModal() {
   document.getElementById("absensiModal").style.display = "none";
 }
 
+// === Rekap Absensi ===
+async function loadRekap() {
+  try {
+    const res = await fetch(`${API_URL}?action=rekap`);
+    const data = await res.json();
+
+    if (!data.success) {
+      console.error("Rekap gagal:", data.message);
+      return;
+    }
+
+    const tbody = document.querySelector("#rekapTable tbody");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    data.data.forEach(row => {
+      const tr = document.createElement("tr");
+      if (row.warning) {
+        tr.style.backgroundColor = "#f8d7da"; // merah muda warning
+      }
+      tr.innerHTML = `
+        <td>${row.noLapak}</td>
+        <td>${row.nama}</td>
+        <td>${row.hadir}</td>
+        <td>${row.tidakHadir}</td>
+        <td>${row.warning ? "⚠️ Warning" : "-"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error("Error rekap:", err);
+  }
+}
+
 // === Event Listeners ===
 document.getElementById("searchInput").addEventListener("input", () => {
   currentPage = 1;
@@ -345,3 +372,4 @@ document.getElementById("pageSizeSelect").addEventListener("change", (e) => {
 
 // === Init ===
 loadData();
+loadRekap();
