@@ -84,13 +84,30 @@ function generateRangeOptions() {
 }
 
 // === Render Grid Lapak ===
+// === Render Grid Lapak (versi aman) ===
 function renderGrid() {
   const grid = document.getElementById("lapakGrid");
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  const filter = document.getElementById("filterSelect").value;
-  const range = document.getElementById("rangeSelect").value;
+  const searchInput = document.getElementById("searchInput");
+  const filterSelect = document.getElementById("filterSelect");
+  const rangeSelect = document.getElementById("rangeSelect");
+
+  // 🔒 Cek elemen penting
+  if (!grid || !searchInput || !filterSelect || !rangeSelect) {
+    console.warn("Elemen grid/filter tidak ditemukan di HTML.");
+    return;
+  }
+
+  const search = searchInput.value.toLowerCase();
+  const filter = filterSelect.value;
+  const range = rangeSelect.value;
 
   grid.innerHTML = "";
+
+  // 🔒 Pastikan lapakData array
+  if (!Array.isArray(lapakData)) {
+    console.warn("lapakData belum berisi array.");
+    return;
+  }
 
   let filtered = lapakData.filter(({ no, nama, status }) => {
     if (filter === "kosong" && status !== "kosong") return false;
@@ -104,22 +121,32 @@ function renderGrid() {
     return true;
   });
 
-  const totalPages = Math.ceil(filtered.length / pageSize);
+  // 🔒 Antisipasi pageSize = 0
+  const safePageSize = pageSize > 0 ? pageSize : filtered.length || 1;
+
+  const totalPages = Math.ceil(filtered.length / safePageSize);
   if (currentPage > totalPages) currentPage = totalPages || 1;
-  const startIdx = (currentPage - 1) * pageSize;
-  const pageData = filtered.slice(startIdx, startIdx + pageSize);
+  const startIdx = (currentPage - 1) * safePageSize;
+  const pageData = filtered.slice(startIdx, startIdx + safePageSize);
 
   pageData.forEach(({ no, nama, status }) => {
     const div = document.createElement("div");
     div.className = "lapak " + status;
     div.innerHTML = `
-  <strong>${no}</strong><br>${formatNama(nama)}
-`;
-    div.onclick = () => openDetailModal(no, nama); // ✅ klik langsung buka modal
+      <strong>${no}</strong><br>${formatNama(nama)}
+    `;
+
+    // 🔒 Cek apakah fungsi modal ada
+    if (typeof openDetailModal === "function") {
+      div.onclick = () => openDetailModal(no, nama);
+    }
+
     grid.appendChild(div);
   });
 
-  renderPagination(totalPages);
+  if (typeof renderPagination === "function") {
+    renderPagination(totalPages);
+  }
 }
 
 
