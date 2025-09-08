@@ -148,6 +148,15 @@ form textarea {
     resize: vertical;
     min-height: 60px;
 }
+.loading, .error, .no-data {
+    grid-column: 1/-1;
+    text-align: center;
+    font-size: 1rem;
+    padding: 20px;
+    color: #555;
+}
+.error { color: red; }
+.no-data { color: #888; }
 
 /* Buttons */
 .btn {
