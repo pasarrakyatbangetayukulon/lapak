@@ -1,101 +1,44 @@
-// === Konfigurasi ===
-const API_URL = "https://script.google.com/macros/s/AKfycbwnf3IcLzgMNXFGAYF8NK4B9rRqd9HkXFuMXFi9de_F0g1GB2KpOq0OS08elQZMBF02nQ/exec";
+// === Absensi Handler ===
 
-const PANITIA_PASSWORD = "panitia123";   // harus sama dengan di Apps Script
+// Jangan pakai const API_URL lagi di sini, cukup di app.js
+// Gunakan saja langsung API_URL yang sudah ada
 
-// ✅ ganti nama variabel biar tidak bentrok dengan app.js
-let absensiLapak = null;
-let absensiNama = null;
+// Fungsi buka modal absensi
+function openAbsensiModal(lapakId, lapakName) {
+  const modal = document.getElementById("detailModal");
+  const title = document.getElementById("detailTitle");
+  const body = document.getElementById("detailBody");
 
-// === Buka Modal Absensi ===
-function openAbsensiModal(noLapak, nama) {
-  console.log("🔐 Buka modal absensi:", noLapak, nama);
-  absensiLapak = noLapak;
-  absensiNama = nama;
-  document.getElementById("absensiInfo").innerText = `Lapak ${noLapak} - ${nama}`;
-  document.getElementById("absensiPassword").value = "";
-  document.getElementById("absensiModal").style.display = "flex"; // ✅ gunakan flex biar modal muncul
-}
+  if (title) title.textContent = `Absensi - Lapak ${lapakId} (${lapakName})`;
+  if (body) body.innerHTML = `
+    <p>Konfirmasi absensi untuk <b>${lapakName}</b>?</p>
+  `;
 
-// === Tutup Modal Absensi ===
-function closeAbsensiModal() {
-  document.getElementById("absensiModal").style.display = "none";
-}
-
-// === Kirim Absensi ===
-async function confirmAbsensi() {
-  const inputPassword = document.getElementById("absensiPassword").value;
-  const btns = document.querySelectorAll("#absensiModal .form-actions button");
-
-  if (!inputPassword) {
-    showToast("⚠️ Password wajib diisi!", "error");
-    return;
-  }
-
-  if (inputPassword !== PANITIA_PASSWORD) {
-    showToast("❌ Password salah!", "error");
-    return;
-  }
-
-  const payload = {
-    action: "absen",
-    password: PANITIA_PASSWORD,
-    noLapak: absensiLapak,
-    nama: absensiNama
-  };
-
-  console.log("📤 Kirim payload absensi:", payload);
-
-  try {
-    // ⏳ Tampilkan loading pada tombol
-    btns.forEach(btn => {
-      btn.disabled = true;
-      if (btn.textContent.includes("Konfirmasi")) {
-        btn.textContent = "⏳ Memproses...";
-      }
-    });
-
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" }
-    });
-
-    const data = await res.json();
-    console.log("📥 Respon absensi:", data);
-
-    if (data.success) {
-      showToast(`✅ Absensi berhasil dicatat untuk ${absensiNama}`, "success");
-      closeAbsensiModal();
-      closeDetailModal();
-
-      // ubah warna lapak jadi hijau
-      const lapakBox = document.querySelector(`.lapak[data-no='${absensiLapak}']`);
-      if (lapakBox) {
-        lapakBox.classList.add("absen-sudah");
-      }
-    } else {
-      showToast(`⚠️ ${data.message}`, "error");
-    }
-  } catch (err) {
-    showToast("❌ Error: " + err.message, "error");
-  } finally {
-    // ✅ Kembalikan tombol normal
-    btns.forEach(btn => {
-      btn.disabled = false;
-      if (btn.textContent.includes("Memproses")) {
-        btn.textContent = "✅ Konfirmasi";
-      }
-    });
-  }
-}
-
-// === Pasang onclick Absensi di modal detail ===
-function setupAbsensiButton(noLapak, nama) {
   const btnAbsensi = document.getElementById("btnAbsensi");
   if (btnAbsensi) {
-    btnAbsensi.onclick = function () {
-      openAbsensiModal(noLapak, nama);
-    };
+    btnAbsensi.onclick = () => submitAbsensi(lapakId);
+  }
+
+  modal.style.display = "block";
+}
+
+// Fungsi submit absensi
+async function submitAbsensi(lapakId) {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: new URLSearchParams({
+        action: "absensi",
+        lapakId: lapakId
+      }),
+    });
+
+    const result = await response.json();
+    alert(result.message || "Absensi berhasil disimpan");
+
+    closeDetailModal();
+  } catch (err) {
+    console.error("Error absensi:", err);
+    alert("Gagal menyimpan absensi.");
   }
 }
