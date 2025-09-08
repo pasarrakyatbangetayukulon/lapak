@@ -264,3 +264,49 @@ document.getElementById("pageSizeSelect").addEventListener("change", (e) => {
 
 // === Init ===
 loadData();
+
+
+
+// === Buka Modal Absensi ===
+async function openAbsensiModal(lapakNo, namaPelapak) {
+  selectedLapak = lapakNo;
+  document.getElementById("absensiTitle").textContent = `Absensi Lapak ${lapakNo} - ${namaPelapak}`;
+  document.getElementById("absensiTableBody").innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
+
+  try {
+    const res = await fetch(`${API_URL}?action=getAbsensi&noLapak=${lapakNo}`);
+    const data = await res.json();
+
+    if (!data.success) {
+      document.getElementById("absensiTableBody").innerHTML =
+        `<tr><td colspan="3">${data.message}</td></tr>`;
+      return;
+    }
+
+    if (data.data.length === 0) {
+      document.getElementById("absensiTableBody").innerHTML =
+        `<tr><td colspan="3">Belum ada data absensi</td></tr>`;
+      return;
+    }
+
+    document.getElementById("absensiTableBody").innerHTML = data.data
+      .map(r => `
+        <tr>
+          <td>${new Date(r.tanggal).toLocaleDateString("id-ID")}</td>
+          <td>${r.nama}</td>
+          <td>${r.status}</td>
+        </tr>
+      `)
+      .join("");
+  } catch (err) {
+    document.getElementById("absensiTableBody").innerHTML =
+      `<tr><td colspan="3">Error: ${err.message}</td></tr>`;
+  }
+
+  document.getElementById("absensiModal").style.display = "flex";
+}
+
+function closeAbsensiModal() {
+  document.getElementById("absensiModal").style.display = "none";
+}
+
