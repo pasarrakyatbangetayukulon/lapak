@@ -21,28 +21,27 @@ function renderGrid() {
     const filter = document.getElementById("filterSelect").value;
 
     grid.innerHTML = "";
-    lapakData.forEach((row) => {
-        const noLapak = row[0];
-        const namaPelapak = row[1] || "Kosong";
 
-        // Filter & search
+    lapakData.forEach(({ no, nama, status }) => {
+        // Filter
+        if (filter === "kosong" && status !== "kosong") return;
+        if (filter === "terisi" && status !== "terisi") return;
+
+        // Search
         if (
-            (filter === "kosong" && row[1]) ||
-            (filter === "terisi" && !row[1]) ||
-            (!noLapak.toLowerCase().includes(search) &&
-                !namaPelapak.toLowerCase().includes(search))
-        ) {
-            return;
-        }
+            !no.toLowerCase().includes(search) &&
+            !nama.toLowerCase().includes(search)
+        ) return;
 
         // Buat kartu lapak
         const div = document.createElement("div");
-        div.className = "lapak " + (row[1] ? "terisi" : "kosong");
-        div.innerHTML = `<strong>${noLapak}</strong><br>${namaPelapak}`;
-        div.onclick = () => openModal(noLapak, namaPelapak);
+        div.className = "lapak " + status; // -> class: "lapak kosong" / "lapak terisi"
+        div.innerHTML = `<strong>${no}</strong><br>${nama}`;
+        div.onclick = () => openModal(no, nama);
         grid.appendChild(div);
     });
 }
+
 
 // Modal
 function openModal(lapakNo, namaPelapak) {
