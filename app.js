@@ -155,7 +155,7 @@ function closeModal() {
 const form = document.getElementById("requestForm");
 const submitBtn = document.getElementById("submitBtn");
 const toast = document.getElementById("toast");
-
+// === Form Submit ===
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -167,7 +167,6 @@ form.addEventListener("submit", async (e) => {
     password: document.getElementById("password").value
   };
 
-  // tombol loading
   submitBtn.disabled = true;
   submitBtn.textContent = "Mengirim...";
 
@@ -178,7 +177,23 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify(body)
     });
 
-    const result = await res.json();
+    if (!res.ok) {
+      console.error("HTTP ERROR:", res.status, res.statusText);
+      showToast("Gagal konek ke server (" + res.status + ")", "error");
+      return;
+    }
+
+    const text = await res.text();
+    console.log("RAW RESPONSE:", text);
+
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (err) {
+      console.error("JSON parse error:", err, text);
+      showToast("Respon server tidak valid", "error");
+      return;
+    }
 
     if (result.success) {
       showToast(result.message, "success");
@@ -191,14 +206,16 @@ form.addEventListener("submit", async (e) => {
       showToast(result.message, "error");
     }
   } catch (err) {
-    console.error("Gagal kirim request:", err);
+    console.error("Fetch error:", err);
     showToast("Terjadi kesalahan koneksi!", "error");
   }
 
-  // reset tombol
   submitBtn.disabled = false;
   submitBtn.textContent = "Kirim";
 });
+
+ 
+ 
 
 function showToast(message, type) {
   toast.textContent = message;
