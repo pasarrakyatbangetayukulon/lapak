@@ -84,7 +84,6 @@ function generateRangeOptions() {
 }
 
 // === Render Grid Lapak ===
-// === Render Grid Lapak ===
 function renderGrid() {
   const grid = document.getElementById("lapakGrid");
   const search = document.getElementById("searchInput").value.toLowerCase();
@@ -113,7 +112,9 @@ function renderGrid() {
   pageData.forEach(({ no, nama, status }) => {
     const div = document.createElement("div");
     div.className = "lapak " + status;
-    div.innerHTML = `<strong>${no}</strong><br>${nama}`;
+    div.innerHTML = `
+  <strong>${no}</strong><br>${formatNama(nama)}
+`;
     div.onclick = () => openDetailModal(no, nama); // ✅ klik langsung buka modal
     grid.appendChild(div);
   });
@@ -247,6 +248,10 @@ function showToast(message, type) {
   setTimeout(() => {
     toast.style.display = "none";
   }, 3000);
+}
+// Pisahkan teks dalam tanda kurung biar bisa diwarnai
+function formatNama(nama) {
+  return nama.replace(/\((.*?)\)/g, '<span class="inside">($1)</span>');
 }
 
 // === Modal Absensi ===
