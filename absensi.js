@@ -1,19 +1,19 @@
 // === Konfigurasi ===
 const API_URL = "https://script.google.com/macros/s/AKfycbwnf3IcLzgMNXFGAYF8NK4B9rRqd9HkXFuMXFi9de_F0g1GB2KpOq0OS08elQZMBF02nQ/exec";
-
-const PANITIA_PASSWORD = "panitia123";   // harus sama dengan di Apps Script
+const PANITIA_PASSWORD = "panitia123";
 
 let selectedLapak = null;
 let selectedNama = null;
 
 // === Buka Modal Absensi ===
 function openAbsensiModal(noLapak, nama) {
-  console.log("🔐 Buka modal absensi:", noLapak, nama);
   selectedLapak = noLapak;
   selectedNama = nama;
+
+  const modal = document.getElementById("absensiModal");
   document.getElementById("absensiInfo").innerText = `Lapak ${noLapak} - ${nama}`;
   document.getElementById("absensiPassword").value = "";
-  document.getElementById("absensiModal").style.display = "flex"; // ✅ gunakan flex biar modal muncul
+  modal.style.display = "flex"; // ✅ pakai flex agar center
 }
 
 // === Tutup Modal Absensi ===
@@ -24,17 +24,12 @@ function closeAbsensiModal() {
 // === Kirim Absensi ===
 async function confirmAbsensi() {
   const inputPassword = document.getElementById("absensiPassword").value;
-  const btns = document.querySelectorAll("#absensiModal .form-actions button");
+  const modal = document.getElementById("absensiModal");
+  const buttons = modal.querySelectorAll(".form-actions button");
+  const confirmBtn = buttons[0]; // tombol pertama = Konfirmasi
 
-  if (!inputPassword) {
-    showToast("⚠️ Password wajib diisi!", "error");
-    return;
-  }
-
-  if (inputPassword !== PANITIA_PASSWORD) {
-    showToast("❌ Password salah!", "error");
-    return;
-  }
+  if (!inputPassword) { showToast("⚠️ Password wajib diisi!", "error"); return; }
+  if (inputPassword !== PANITIA_PASSWORD) { showToast("❌ Password salah!", "error"); return; }
 
   const payload = {
     action: "absen",
@@ -43,58 +38,46 @@ async function confirmAbsensi() {
     nama: selectedNama
   };
 
-  console.log("📤 Kirim payload absensi:", payload);
-
   try {
-    // ⏳ Tampilkan loading pada tombol
-    btns.forEach(btn => {
-      btn.disabled = true;
-      if (btn.textContent.includes("Konfirmasi")) {
-        btn.textContent = "⏳ Memproses...";
-      }
-    });
+    // ⏳ indikator proses di tombol
+    buttons.forEach(b => b.disabled = true);
+    const oldText = confirmBtn.textContent;
+    confirmBtn.textContent = "⏳ Memproses...";
 
     const res = await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     });
 
-    const data = await res.json();
-    console.log("📥 Respon absensi:", data);
+    // Antisipasi respon non-JSON
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch { throw new Error("Respon server tidak valid"); }
 
     if (data.success) {
-      showToast(`✅ Absensi berhasil dicatat untuk ${selectedNama}`, "success");
+      showToast(`✅ Absensi berhasil untuk ${selectedNama}`, "success");
       closeAbsensiModal();
-      closeDetailModal();
+      closeDetailModal?.();
 
-      // ubah warna lapak jadi hijau
+      // ✅ warnai kotak lapak (butuh data-no dari app.js patch)
       const lapakBox = document.querySelector(`.lapak[data-no='${selectedLapak}']`);
-      if (lapakBox) {
-        lapakBox.classList.add("absen-sudah");
-      }
+      if (lapakBox) lapakBox.classList.add("absen-sudah");
     } else {
       showToast(`⚠️ ${data.message}`, "error");
     }
   } catch (err) {
     showToast("❌ Error: " + err.message, "error");
   } finally {
-    // ✅ Kembalikan tombol normal
-    btns.forEach(btn => {
-      btn.disabled = false;
-      if (btn.textContent.includes("Memproses")) {
-        btn.textContent = "✅ Konfirmasi";
-      }
-    });
+    buttons.forEach(b => b.disabled = false);
+    confirmBtn.textContent = "✅ Konfirmasi";
   }
 }
 
-// === Pasang onclick Absensi di modal detail ===
-function setupAbsensiButton(noLapak, nama) {
-  const btnAbsensi = document.getElementById("btnAbsensi");
-  if (btnAbsensi) {
-    btnAbsensi.onclick = function () {
-      openAbsensiModal(noLapak, nama);
-    };
+// (opsional) Enter untuk submit di input password
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && document.getElementById("absensiModal").style.display === "flex") {
+    confirmAbsensi();
   }
-}
+});
