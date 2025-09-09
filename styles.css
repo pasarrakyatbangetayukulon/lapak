@@ -1,363 +1,607 @@
 /* Reset & font */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  background: #f4f6f9;
-  color: #333;
-  line-height: 1.4;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #f4f6f9;
+    color: #333;
+    line-height: 1.4;
 }
 
 /* Header Sticky */
 header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: #2c3e50;
-  color: #fff;
-  padding: 15px 20px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-header h1 {
-  font-size: 1.8rem;
-}
-
-/* Main */
-main {
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(135deg, #00c6ff, #2196f3, #0d47a1);
+    color: #fff;
+    padding: 1.5rem 1rem;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* Toolbar Sticky */
-.toolbar {
-  position: sticky;
-  top: 60px; /* sesuaikan tinggi header */
-  background: #f4f6f9;
-  z-index: 999;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.toolbar input,
-.toolbar select {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.95rem;
-  flex: 1;
-  min-width: 140px;
+.header-container {
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-/* === Grid Lapak (responsif) === */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 15px;
+.logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: contain;
+    background: white;
+    padding: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    display: block;
+    margin: 0 auto;
 }
 
-/* Laptop / tablet besar */
-@media (max-width: 1200px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
+
+/* Search */
+#searchInput {
+    flex: 100%;
+    width: 100%;
+    max-width: 400px;
+    /* biar tidak kepanjangan */
+    margin: 0 auto;
+    /* center di toolbar */
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: all 0.2s ease;
 }
 
-/* Tablet / HP besar */
+#searchInput:focus {
+    border-color: #2196f3;
+    box-shadow: 0 0 6px rgba(33, 150, 243, 0.4);
+}
+
+/* Tablet */
 @media (max-width: 768px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
+    #searchInput {
+        max-width: 100%;
+        /* biar full */
+        font-size: 0.95rem;
+        padding: 10px 14px;
+    }
 }
 
 /* HP kecil */
 @media (max-width: 480px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+    #searchInput {
+        font-size: 0.9rem;
+        padding: 9px 12px;
+    }
+
+    .toolbar select {
+        flex: 100%;
+        /* dropdown juga jadi full width */
+        width: 100%;
+    }
 }
 
+/* Warna khusus untuk option */
+#filterSelect option[value="kosong"] {
+    background-color: #2ecc71;
+    /* hijau */
+    color: #fff;
+}
+
+#filterSelect option[value="terisi"] {
+    background-color: #ffffff;
+    /* putih */
+    color: #333;
+}
+
+
+.header-text h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.header-text p {
+    margin-top: 0.3rem;
+    font-size: 1rem;
+    opacity: 0.95;
+}
+
+/* Main */
+main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Toolbar Sticky */
+.toolbar {
+    position: sticky;
+    top: 60px;
+    background: #f4f6f9;
+    z-index: 999;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.toolbar input,
+.toolbar select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    flex: 1;
+    min-width: 140px;
+}
+
+/* === Grid Lapak === */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+}
+
+/* Responsif grid */
+@media (max-width: 1200px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* === Card Lapak === */
 .lapak {
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-  text-align: center;
-  font-weight: 600;
-  font-size: 0.9rem;
-  word-break: break-word;
-  user-select: none;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    word-break: break-word;
+    user-select: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease,
+        background 0.3s ease, color 0.3s ease,
+        opacity 0.3s ease, filter 0.3s ease;
 }
+
+/* Nomor lapak */
+.lapak-no {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+.lapak-no .number {
+    color: #0D47A1;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+
+
+/* Garis pemisah */
+.lapak-separator {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin: 6px 0;
+}
+
+/* Bagian nama utama */
+.lapak-nama {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 4px;
+}
+
+/* Bagian dalam kurung */
+.lapak-inside {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: blue;
+    margin-top: 4px;
+}
+
+/* Zoom hanya saat disentuh/hover */
 .lapak:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+    z-index: 2000;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    background: #fff !important;
+    color: #000 !important;
 }
-.lapak:active {
-  transform: scale(0.97);
+
+/* Teks ikut zoom */
+.lapak .lapak-info {
+    transition: font-size 0.3s ease, font-weight 0.3s ease;
+}
+
+.lapak:hover .lapak-info {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Lapak lain redup ketika grid dihover */
+.grid:hover .lapak {
+    opacity: 0.5;
+    filter: blur(1px);
+}
+
+.grid:hover .lapak:hover {
+    opacity: 1;
+    filter: blur(0);
 }
 
 /* Status */
-.lapak.kosong { background: #2ecc71; color: #fff; }
-.lapak.terisi { background: #fff; color: #333; }
+.lapak.kosong {
+    background: #2ecc71;
+    color: #fff;
+}
 
-/* Warning lapak absen >= 3 */
+.lapak.terisi {
+    background: #fff;
+    color: #333;
+}
+
 .lapak.warning {
-  background: #e74c3c !important;
-  color: #fff !important;
-  border: 1px solid #c0392b !important;
-}
-.lapak .inside {
-  color: blue;
-  font-weight: 500;
+    background: #e74c3c !important;
+    color: #fff !important;
+    border: 1px solid #c0392b !important;
 }
 
-/* === Tombol dalam Modal (Absensi & Request) === */
+.lapak.absen-sudah {
+    background: #4caf50;
+    color: #fff;
+}
+
+.lapak .inside {
+    color: blue;
+    font-weight: 500;
+}
+
+/* === Tombol dalam Modal === */
 .btn-absensi,
 .btn-request {
-  width: 100%;
-  padding: 8px 0;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #fff;
-  transition: 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.btn-absensi {
-  background: #28a745;
-}
-.btn-absensi:hover {
-  background: #218838;
-}
-.btn-request {
-  background: #007bff;
-}
-.btn-request:hover {
-  background: #0069d9;
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #fff;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
-/* === Modal Modern === */
+.btn-absensi {
+    background: #28a745;
+}
+
+.btn-absensi:hover {
+    background: #218838;
+}
+
+.btn-request {
+    background: #007bff;
+}
+
+.btn-request:hover {
+    background: #0069d9;
+}
+
+/* === Modal === */
 .modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
-  justify-content: center; align-items: center;
-  padding: 1rem;
-  z-index: 1000;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    z-index: 1000;
 }
+
 .modal-content {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 1rem;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  animation: fadeIn 0.3s ease;
-  position: relative;
+    background: #fff;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    max-width: 500px;
+    max-height: 90vh;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 90%;
+    max-height: 90vh;
+    /* tidak melebihi tinggi layar */
+    overflow-y: auto;
+    /* scroll kalau konten terlalu panjang */
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
 }
-.modal-content h2 { margin-bottom: 1rem; }
+
+.modal-content h2 {
+    margin-bottom: 1rem;
+}
+
 .modal-content input,
 .modal-content textarea {
-  width: 100%;
-  padding: 0.8rem;
-  margin: 0.5rem 0;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
 }
+
 .modal-content textarea {
-  resize: vertical;
-  min-height: 70px;
+    resize: vertical;
+    min-height: 70px;
 }
+
 .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #888;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
 }
-.close-btn:hover { color: #333; }
+
+.close-btn:hover {
+    color: #333;
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
-}
-.lapak.absen-sudah {
-  background-color: #4caf50; /* hijau */
-  color: white;
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Form Actions */
 .form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-.form-actions button {
-  flex: 1;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-}
-#submitBtn {
-  background: #007bff;
-  color: #fff;
-}
-#submitBtn:hover { background: #0056b3; }
-#submitBtn.loading {
-  opacity: 0.7;
-  cursor: wait;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
-/* === Toast Notification === */
-.toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%; transform: translateX(-50%);
-  padding: 1rem 1.5rem;
-  border-radius: 0.5rem;
-  color: #fff;
-  font-weight: bold;
-  display: none;
-  z-index: 2000;
+.form-actions button {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
 }
-.toast.success { background: #28a745; }
-.toast.error { background: #dc3545; }
+
+#submitBtn {
+    background: #007bff;
+    color: #fff;
+}
+
+#submitBtn:hover {
+    background: #0056b3;
+}
+
+#submitBtn.loading {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+/* === Toast === */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-weight: bold;
+    display: none;
+    z-index: 2000;
+}
+
+.toast.success {
+    background: #28a745;
+}
+
+.toast.error {
+    background: #dc3545;
+}
 
 /* === Loading Overlay === */
 .loading-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(255,255,255,0.8);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
 }
+
 .loading-overlay .loading-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
 .spinner {
-  width: 60px; height: 60px;
-  border: 6px solid #ddd;
-  border-top: 6px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+    width: 60px;
+    height: 60px;
+    border: 6px solid #ddd;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
+
 .loading-text {
-  margin-top: 15px;
-  font-size: 1rem;
-  color: #333;
-  text-align: center;
-  font-weight: 500;
+    margin-top: 15px;
+    font-size: 1rem;
+    color: #333;
+    text-align: center;
+    font-weight: 500;
 }
 
 /* Pagination */
 .pagination {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
 }
+
 .pagination button {
-  padding: 6px 12px;
-  border: none;
-  background: #007bff;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
+    padding: 6px 12px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
 }
+
 .pagination button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+    background: #ccc;
+    cursor: not-allowed;
 }
 
 /* === Responsif Breakpoints === */
-@media (max-width: 1200px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
-}
-
 @media (max-width: 768px) {
-  header h1 { font-size: 1.4rem; }
+    header h1 {
+        font-size: 1.4rem;
+    }
 
-  .toolbar {
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px;
-  }
-  .toolbar input,
-  .toolbar select {
-    width: 100%;
-    min-width: unset;
-    font-size: 0.9rem;
-    padding: 8px;
-    border-radius: 5px;
-  }
+    .toolbar {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px;
+    }
 
-  .grid { grid-template-columns: repeat(3, 1fr); }
-  .lapak { font-size: 0.85rem; padding: 12px; }
-  .modal-content { padding: 1.5rem; }
-  .form-actions { flex-direction: column; }
-  .pagination { flex-direction: column; gap: 8px; }
-  .pagination button { width: 100%; font-size: 0.85rem; }
-  .loading-text { font-size: 0.9rem; }
+    .toolbar input,
+    .toolbar select {
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 8px;
+    }
 
-  .btn-absensi,
-  .btn-request {
-    font-size: 0.85rem;
-    padding: 7px 0;
-    border-radius: 5px;
-  }
+    .lapak {
+        font-size: 0.85rem;
+        padding: 12px;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .pagination button {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+
+    .btn-absensi,
+    .btn-request {
+        font-size: 0.85rem;
+        padding: 7px 0;
+    }
 }
 
 @media (max-width: 480px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
-  .lapak { font-size: 0.8rem; padding: 10px; }
-  .modal-content { padding: 1rem; }
+    .lapak {
+        font-size: 0.8rem;
+        padding: 10px;
+    }
 
-  .toolbar {
-    gap: 6px;
-    padding: 6px;
-  }
-  .toolbar input,
-  .toolbar select {
-    font-size: 0.85rem;
-    padding: 7px;
-  }
+    .modal-content {
+        padding: 1rem;
+    }
 
-  .btn, .form-actions button {
-    font-size: 0.85rem; padding: 0.6rem;
-  }
-  .pagination button {
-    font-size: 0.8rem; padding: 6px 10px;
-  }
-  .loading-text { font-size: 0.8rem; }
+    .toolbar {
+        gap: 6px;
+        padding: 6px;
+    }
 
-  .btn-absensi,
-  .btn-request {
-    font-size: 0.8rem;
-    padding: 6px 0;
-    border-radius: 5px;
-  }
+    .toolbar input,
+    .toolbar select {
+        font-size: 0.85rem;
+        padding: 7px;
+    }
+
+    .btn,
+    .form-actions button {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+    }
+
+    .pagination button {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+
+    .btn-absensi,
+    .btn-request {
+        font-size: 0.8rem;
+        padding: 6px 0;
+    }
 }
