@@ -1,118 +1,110 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Monitoring Pelapak</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📊 Monitoring Pelapak</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <img src="images/logo.png" alt="Logo Pasar Rakyat Bangetayu Kulon" class="logo">
-            <h1>📊 Monitoring Pelapak</h1>
-            <p>Digitalisasi pasar: lapak cepat dicari, absensi rapi, pergantian transparan.</p>
-        </div>
-    </header>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <img src="images/logo.png" alt="Logo Pasar Rakyat Bangetayu Kulon" class="logo" />
+      <div class="header-text">
+        <h1>📊 Monitoring Pelapak</h1>
+        <p>Digitalisasi pasar: lapak cepat dicari, absensi rapi, pergantian transparan.</p>
+      </div>
+    </div>
+  </header>
 
-
-    <!-- Main -->
-    <main>
-        <!-- Loading Spinner -->
-        <div id="loading" class="loading-overlay">
-            <div class="loading-box">
-                <div class="spinner"></div>
-                <p class="loading-text" id="loadingText">Sedang memuat data...</p>
-            </div>
-        </div>
-
-        <!-- Toolbar -->
-        <div class="toolbar card">
-            <input type="text" id="searchInput" class="input" placeholder="🔎 Cari nomor atau nama pelapak...">
-
-            <select id="filterSelect" class="input">
-                <option value="all">📋 Semua Lapak</option>
-                <option value="kosong">🟩 Lapak Kosong</option>
-                <option value="terisi">🏠 Lapak Terisi</option>
-            </select>
-
-            <select id="rangeSelect" class="input">
-                <option value="all"># Pilih Nomor Lapak</option>
-            </select>
-
-            <select id="pageSizeSelect" class="input">
-                <option value="10">10 / halaman</option>
-                <option value="20">20 / halaman</option>
-                <option value="50">50 / halaman</option>
-                <option value="all" selected>📄 Tampilkan Semua</option>
-            </select>
-        </div>
-
-        <!-- Grid Lapak -->
-        <section>
-            <div id="lapakGrid" class="grid">
-                <!-- kotak lapak akan di-render via app.js -->
-            </div>
-            <div id="paginationNav" class="pagination"></div>
-        </section>
-    </main>
-
-    <!-- Modal Detail -->
-    <div id="detailModal" class="modal">
-        <div class="modal-content card">
-            <span class="close-btn" onclick="closeDetailModal()">&times;</span>
-            <h2 id="detailTitle">Detail Lapak</h2>
-            <div id="detailBody"></div>
-            <div class="form-actions">
-                <button id="btnAbsensi" class="btn btn-absensi">✅ Absensi</button>
-                <button id="btnRequest" class="btn btn-request">🔄 Request</button>
-            </div>
-        </div>
+  <!-- Main -->
+  <main>
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading-overlay" aria-hidden="true">
+      <div class="loading-box">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loadingText">Sedang memuat data...</p>
+      </div>
     </div>
 
-    <!-- Modal Password Absensi -->
-    <div class="modal" id="absensiModal">
-        <div class="modal-content card">
-            <span class="close-btn" onclick="closeAbsensiModal()">&times;</span>
-            <h2>🔐 Konfirmasi Absensi</h2>
-            <p id="absensiInfo"></p>
-            <input type="password" id="absensiPassword" class="input" placeholder="Masukkan Password Panitia" required>
-            <div class="form-actions">
-                <button class="btn btn-absensi" onclick="confirmAbsensi()">✅ Konfirmasi</button>
-                <button class="btn btn-danger" onclick="closeAbsensiModal()">❌ Batal</button>
-            </div>
-        </div>
+    <!-- Toolbar -->
+    <div class="toolbar card">
+      <input type="text" id="searchInput" class="input" placeholder="🔎 Cari nomor atau nama pelapak..." />
+      <select id="filterSelect" class="input">
+        <option value="all">📋 Semua Lapak</option>
+        <option value="kosong">🟩 Lapak Kosong</option>
+        <option value="terisi">🏠 Lapak Terisi</option>
+      </select>
+      <select id="rangeSelect" class="input">
+        <option value="all"># Pilih Nomor Lapak</option>
+      </select>
+      <select id="pageSizeSelect" class="input">
+        <option value="10">10 / halaman</option>
+        <option value="20">20 / halaman</option>
+        <option value="50">50 / halaman</option>
+        <option value="all" selected>📄 Tampilkan Semua</option>
+      </select>
     </div>
 
-    <!-- Modal Request -->
-    <div class="modal" id="requestModal">
-        <div class="modal-content card">
-            <span class="close-btn" onclick="closeRequestModal()">&times;</span>
-            <h2>📝 Form Request Pergantian Pelapak</h2>
-            <form id="requestForm">
-                <input type="text" id="nama" class="input" placeholder="Masukkan Nama Panitia" required>
-                <input type="text" id="lapakLama" class="input" placeholder="Nomor & Nama Lapak Lama" readonly>
-                <input type="text" id="lapakBaru" class="input" placeholder="Nomor & Nama Lapak Baru" required>
-                <textarea id="alasan" class="input" placeholder="Tuliskan alasan pergantian..." required></textarea>
-                <input type="password" id="password" class="input" placeholder="Password Panitia" required>
+    <!-- Grid Lapak -->
+    <section>
+      <div id="lapakGrid" class="grid"><!-- dirender via app.js --></div>
+      <div id="paginationNav" class="pagination"></div>
+    </section>
+  </main>
 
-                <div class="form-actions">
-                    <button type="submit" id="submitBtn" class="btn btn-absensi">✅ Kirim</button>
-                    <button type="button" class="btn btn-danger" onclick="closeRequestModal()">❌ Batal</button>
-                </div>
-            </form>
-        </div>
+  <!-- Modal Detail -->
+  <div id="detailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-content card">
+      <button class="close-btn" type="button" aria-label="Tutup" onclick="closeDetailModal()">&times;</button>
+      <h2 id="detailTitle">Detail Lapak</h2>
+      <div id="detailBody"></div>
+      <div class="form-actions">
+        <button id="btnAbsensi" class="btn btn-absensi" type="button">✅ Absensi</button>
+        <button id="btnRequest" class="btn btn-request" type="button">🔄 Request</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast"></div>
+  <!-- Modal Password Absensi -->
+  <div class="modal" id="absensiModal" role="dialog" aria-modal="true">
+    <div class="modal-content card">
+      <button class="close-btn" type="button" aria-label="Tutup" onclick="closeAbsensiModal()">&times;</button>
+      <h2>🔐 Konfirmasi Absensi</h2>
+      <p id="absensiInfo"></p>
+      <input type="password" id="absensiPassword" class="input" placeholder="Masukkan Password Panitia" required />
+      <div class="form-actions">
+        <button class="btn btn-absensi" type="button" onclick="confirmAbsensi()">✅ Konfirmasi</button>
+        <button class="btn btn-danger" type="button" onclick="closeAbsensiModal()">❌ Batal</button>
+      </div>
+    </div>
+  </div>
 
-    <!-- Script -->
-    <script src="app.js"></script>
-    <script src="absensi.js"></script>
+  <!-- Modal Request -->
+  <div class="modal" id="requestModal" role="dialog" aria-modal="true">
+    <div class="modal-content card">
+      <button class="close-btn" type="button" aria-label="Tutup" onclick="closeRequestModal()">&times;</button>
+      <h2>📝 Form Request Pergantian Pelapak</h2>
+      <form id="requestForm">
+        <input type="text" id="nama" class="input" placeholder="Masukkan Nama Panitia" required />
+        <input type="text" id="lapakLama" class="input" placeholder="Nomor & Nama Lapak Lama" readonly />
+        <input type="text" id="lapakBaru" class="input" placeholder="Nomor & Nama Lapak Baru" required />
+        <textarea id="alasan" class="input" placeholder="Tuliskan alasan pergantian..." required></textarea>
+        <input type="password" id="password" class="input" placeholder="Password Panitia" required />
+        <div class="form-actions">
+          <button type="submit" id="submitBtn" class="btn btn-absensi">✅ Kirim</button>
+          <button type="button" class="btn btn-danger" onclick="closeRequestModal()">❌ Batal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Script -->
+  <script src="app.js"></script>
+  <script src="absensi.js"></script>
 </body>
-
 </html>
