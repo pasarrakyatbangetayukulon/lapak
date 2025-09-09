@@ -385,6 +385,13 @@ main {
 .close-btn:hover {
     color: #333;
 }
+.btn-danger {
+  background: #dc3545;
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #c82333;
+}
 
 @keyframes fadeIn {
     from {
