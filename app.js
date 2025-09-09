@@ -1,394 +1,273 @@
-// === Konfigurasi ===
+// =================== Konfigurasi ===================
 const API_URL = "https://script.google.com/macros/s/AKfycbwnf3IcLzgMNXFGAYF8NK4B9rRqd9HkXFuMXFi9de_F0g1GB2KpOq0OS08elQZMBF02nQ/exec";
-
+const modal = document.querySelector('.modal');
+const modalContent = modal.querySelector('.modal-content');
+const closeBtn = modal.querySelector('.close-btn');
+const filterSelect = document.getElementById("filterSelect");
 let lapakData = [];
 let selectedLapak = "";
 let currentPage = 1;
-let pageSize = Infinity; // ✅ default: tampil semua data
+let pageSize = Infinity;
 let loadingInterval;
 
-// === Load Data dari Backend ===
-// === Load Data dari Backend (versi aman) ===
+// =================== Load Data ===================
 async function loadData() {
-  try {
-    showLoading(true);
-    const res = await fetch(API_URL);
-
-    if (!res.ok) {
-      console.error("HTTP ERROR:", res.status, res.statusText);
-      showToast("Gagal konek ke server (" + res.status + ")", "error");
-      return;
-    }
-
-    const text = await res.text();
-    let data;
     try {
-      data = JSON.parse(text);
-      console.log("✅ Data dari API:", data);
+        showLoading(true);
+        const res = await fetch(API_URL);
+        if (!res.ok) {
+            showToast("Gagal konek ke server (" + res.status + ")", "error");
+            return;
+        }
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (err) {
+            showToast("Respon server tidak valid", "error");
+            return;
+        }
+        lapakData = Array.isArray(data) ? data : (data.data || []);
+        pageSize = lapakData.length || 1;
+
+        const pageSizeSelect = document.getElementById("pageSizeSelect");
+        if (pageSizeSelect) pageSizeSelect.value = "all";
+
+        generateRangeOptions();
+        renderGrid();
     } catch (err) {
-      console.error("❌ JSON parse error:", err, text);
-      showToast("Respon server tidak valid", "error");
-      return;
+        showToast("Terjadi kesalahan koneksi!", "error");
+    } finally {
+        showLoading(false);
     }
-
-    // 🔒 Pastikan lapakData selalu array
-    if (Array.isArray(data)) {
-      lapakData = data;
-    } else if (data && Array.isArray(data.data)) {
-      lapakData = data.data;
-    } else {
-      console.warn("Format data API tidak sesuai:", data);
-      lapakData = [];
-    }
-
-    // kalau kosong, jangan error
-    pageSize = lapakData.length || 1;
-    const pageSizeSelect = document.getElementById("pageSizeSelect");
-    if (pageSizeSelect) pageSizeSelect.value = "all";
-
-    generateRangeOptions();
-    renderGrid();
-  } catch (err) {
-    console.error("❌ Fetch error:", err);
-    showToast("Terjadi kesalahan koneksi!", "error");
-  } finally {
-    showLoading(false);
-  }
 }
 
-
-// === Loading Spinner ===
+// =================== Loading Spinner ===================
 function showLoading(show) {
-  const loader = document.getElementById("loading");
-  const text = document.getElementById("loadingText");
-
-  if (show) {
-    loader.style.display = "flex";
-    let dots = 0;
-    loadingInterval = setInterval(() => {
-      dots = (dots + 1) % 4; 
-      text.textContent = "Sedang memuat data" + ".".repeat(dots);
-    }, 500);
-  } else {
-    loader.style.display = "none";
-    clearInterval(loadingInterval);
-    text.textContent = "Sedang memuat data"; 
-  }
+    const loader = document.getElementById("loading");
+    const text = document.getElementById("loadingText");
+    if (show) {
+        loader.style.display = "flex";
+        let dots = 0;
+        loadingInterval = setInterval(() => {
+            dots = (dots + 1) % 4;
+            text.textContent = "Sedang memuat data" + ".".repeat(dots);
+        }, 500);
+    } else {
+        loader.style.display = "none";
+        clearInterval(loadingInterval);
+        text.textContent = "Sedang memuat data";
+    }
 }
 
-// === Generate Range Dropdown ===
+// =================== Generate Range ===================
 function generateRangeOptions() {
-  const rangeSelect = document.getElementById("rangeSelect");
-  rangeSelect.innerHTML = ""; 
+    const rangeSelect = document.getElementById("rangeSelect");
+    rangeSelect.innerHTML = "";
+    const optAll = document.createElement("option");
+    optAll.value = "all";
+    optAll.textContent = "Semua Nomor";
+    rangeSelect.appendChild(optAll);
 
-  const optAll = document.createElement("option");
-  optAll.value = "all";
-  optAll.textContent = "Semua Nomor";
-  rangeSelect.appendChild(optAll);
-
-  let maxNo = lapakData.length > 0 ? lapakData[lapakData.length - 1].no : 0;
-  let step = 50;
-  for (let start = 1; start <= maxNo; start += step) {
-    let end = Math.min(start + step - 1, maxNo);
-    const opt = document.createElement("option");
-    opt.value = `${start}-${end}`;
-    opt.textContent = `${start} - ${end}`;
-    rangeSelect.appendChild(opt);
-  }
+    let maxNo = lapakData.length > 0 ? lapakData[lapakData.length - 1].no : 0;
+    let step = 50;
+    for (let start = 1; start <= maxNo; start += step) {
+        let end = Math.min(start + step - 1, maxNo);
+        const opt = document.createElement("option");
+        opt.value = `${start}-${end}`;
+        opt.textContent = `${start} - ${end}`;
+        rangeSelect.appendChild(opt);
+    }
 }
 
-// === Render Grid Lapak ===
-// === Render Grid Lapak (versi aman) ===
+// =================== Render Grid ===================
 function renderGrid() {
-  const grid = document.getElementById("lapakGrid");
-  const searchInput = document.getElementById("searchInput");
-  const filterSelect = document.getElementById("filterSelect");
-  const rangeSelect = document.getElementById("rangeSelect");
+    const grid = document.getElementById("lapakGrid");
+    const searchInput = document.getElementById("searchInput");
+    const filterSelect = document.getElementById("filterSelect");
+    const rangeSelect = document.getElementById("rangeSelect");
 
-  // 🔒 Cek elemen penting
-  if (!grid || !searchInput || !filterSelect || !rangeSelect) {
-    console.warn("Elemen grid/filter tidak ditemukan di HTML.");
-    return;
-  }
+    if (!grid || !searchInput || !filterSelect || !rangeSelect) return;
 
-  const search = searchInput.value.toLowerCase();
-  const filter = filterSelect.value;
-  const range = rangeSelect.value;
+    const search = searchInput.value.toLowerCase();
+    const filter = filterSelect.value;
+    const range = rangeSelect.value;
 
-  grid.innerHTML = "";
+    grid.innerHTML = "";
 
-  // 🔒 Pastikan lapakData array
-  if (!Array.isArray(lapakData)) {
-    console.warn("lapakData belum berisi array.");
-    return;
-  }
-
-  let filtered = lapakData.filter(({ no, nama, status }) => {
-    if (filter === "kosong" && status !== "kosong") return false;
-    if (filter === "terisi" && status !== "terisi") return false;
-    if (!no.toString().includes(search) && !nama.toLowerCase().includes(search)) return false;
-
-    if (range !== "all") {
-      const [start, end] = range.split("-").map(Number);
-      if (no < start || no > end) return false;
-    }
-    return true;
-  });
-
-  // 🔒 Antisipasi pageSize = 0
-  const safePageSize = pageSize > 0 ? pageSize : filtered.length || 1;
-
-  const totalPages = Math.ceil(filtered.length / safePageSize);
-  if (currentPage > totalPages) currentPage = totalPages || 1;
-  const startIdx = (currentPage - 1) * safePageSize;
-  const pageData = filtered.slice(startIdx, startIdx + safePageSize);
-
- pageData.forEach(({ no, nama, status }) => {
-    const div = document.createElement("div");
-    div.className = "lapak " + status;
-    div.setAttribute("data-no", no);      // ✅ penting untuk update warna setelah absen
-    div.setAttribute("data-nama", nama);  // optional
-    div.innerHTML = `<strong>${no}</strong><br>${formatNama(nama)}`;
-
-    if (typeof openDetailModal === "function") {
-   div.onclick = () => openDetailModal({ 
-  noLapak: no, 
-  nama: nama, 
-  status: status 
-});
-    }
-    grid.appendChild(div);
-  });
-
-  if (typeof renderPagination === "function") {
-    renderPagination(totalPages);
-  }
-}
-
-
-
-// === Render Pagination Nav ===
-function renderPagination(totalPages) {
-  const nav = document.getElementById("paginationNav");
-  nav.innerHTML = "";
-  if (totalPages <= 1) return;
-
-  const info = document.createElement("span");
-  info.textContent = `Halaman ${currentPage} dari ${totalPages}`;
-  nav.appendChild(info);
-
-  const prevBtn = document.createElement("button");
-  prevBtn.textContent = "⬅ Prev";
-  prevBtn.disabled = currentPage === 1;
-  prevBtn.onclick = () => {
-    currentPage--;
-    renderGrid();
-  };
-  nav.appendChild(prevBtn);
-
-  const nextBtn = document.createElement("button");
-  nextBtn.textContent = "Next ➡";
-  nextBtn.disabled = currentPage === totalPages;
-  nextBtn.onclick = () => {
-    currentPage++;
-    renderGrid();
-  };
-  nav.appendChild(nextBtn);
-}
-
-// === Buka Modal Detail Lapak ===
-function openDetailModal(lapak) {
-  const modal = document.getElementById("detailModal");
-  const title = document.getElementById("detailTitle");
-  const body = document.getElementById("detailBody");
-  const btnAbsensi = document.getElementById("btnAbsensi");
-  const btnRequest = document.getElementById("btnRequest");
-
-  if (title) {
-    title.textContent = `Detail Lapak ${lapak.noLapak}`;
-  }
-
-  if (body) {
-    body.innerHTML = `
-      <p><b>Nomor:</b> ${lapak.noLapak}</p>
-      <p><b>Nama:</b> ${lapak.nama}</p>
-      <p><b>Status:</b> ${lapak.status}</p>
-    `;
-  }
-
-  if (btnAbsensi) {
-    btnAbsensi.onclick = () => openAbsensiModal(lapak.noLapak, lapak.nama);
-  }
-
-  if (btnRequest) {
-    btnRequest.onclick = () => {
-      document.getElementById("lapakLama").value = `${lapak.noLapak} - ${lapak.nama}`;
-      document.getElementById("lapakBaru").value = "";
-      document.getElementById("alasan").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("requestModal").style.display = "block";
-    };
-  }
-
-  modal.style.display = "block";
-}
-
-// === Tutup Modal Detail ===
-function closeDetailModal() {
-  document.getElementById("detailModal").style.display = "none";
-}
-
-
-// === Modal Request ===
-function openRequestModal(lapakNo, namaPelapak) {
-  selectedLapak = lapakNo;
-  document.getElementById("lapakLama").value = lapakNo + " - " + namaPelapak;
-  document.getElementById("requestModal").style.display = "flex";
-}
-
-function closeRequestModal() {
-  document.getElementById("requestModal").style.display = "none";
-  document.getElementById("requestForm").reset();
-}
-
-// === Submit Request Form ===
-const form = document.getElementById("requestForm");
-const submitBtn = document.getElementById("submitBtn");
-const toast = document.getElementById("toast");
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const body = {
-    nama: document.getElementById("nama").value,
-    lapakLama: document.getElementById("lapakLama").value,
-    lapakBaru: document.getElementById("lapakBaru").value,
-    alasan: document.getElementById("alasan").value,
-    password: document.getElementById("password").value
-  };
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Mengirim...";
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
+    let filtered = lapakData.filter(({ no, nama, status }) => {
+        if (filter === "kosong" && status !== "kosong") return false;
+        if (filter === "terisi" && status !== "terisi") return false;
+        if (!no.toString().includes(search) && !nama.toLowerCase().includes(search)) return false;
+        if (range !== "all") {
+            const [start, end] = range.split("-").map(Number);
+            if (no < start || no > end) return false;
+        }
+        return true;
     });
 
-    if (!res.ok) {
-      console.error("HTTP ERROR:", res.status, res.statusText);
-      showToast("Gagal konek ke server (" + res.status + ")", "error");
-      return;
+    const safePageSize = pageSize > 0 ? pageSize : filtered.length || 1;
+    const totalPages = Math.ceil(filtered.length / safePageSize);
+    if (currentPage > totalPages) currentPage = totalPages || 1;
+    const startIdx = (currentPage - 1) * safePageSize;
+    const pageData = filtered.slice(startIdx, startIdx + safePageSize);
+
+    pageData.forEach(({ no, nama, status }) => {
+        const div = document.createElement("div");
+        div.className = "lapak " + status;
+        div.setAttribute("data-no", no);
+        div.setAttribute("data-nama", nama);
+
+        div.innerHTML = `
+            <div class="lapak-info">
+                <div class="lapak-no">Lapak: <span class="number">${no}</span></div>
+                <hr class="lapak-separator" />
+                <div class="lapak-nama">
+                    ${nama.replace(/\(.*?\)/g, '')} 
+                </div>
+                ${/\(.*?\)/.test(nama) ? `
+                    <hr class="lapak-separator" />
+                    <div class="lapak-inside">${nama.match(/\((.*?)\)/)[1]}</div>
+                ` : ""}
+            </div>
+        `;
+
+        if (typeof openDetailModal === "function") {
+            div.onclick = () => openDetailModal({ noLapak: no, nama: nama, status: status });
+        }
+
+        grid.appendChild(div);
+    });
+
+    enableLongPressZoom();
+    if (typeof renderPagination === "function") renderPagination(totalPages);
+}
+
+// =================== Long Press Zoom ===================
+function enableLongPressZoom() {
+    const LONG_PRESS_DURATION = 600;
+
+    document.querySelectorAll('.lapak').forEach(card => {
+        let pressTimer;
+
+        const zoomIn = () => {
+            card.style.transform = "scale(1.4)";
+            card.style.zIndex = "2000";
+            card.style.boxShadow = "0 10px 25px rgba(0,0,0,0.3)";
+            document.querySelectorAll('.lapak').forEach(other => {
+                if (other !== card) {
+                    other.style.opacity = "0.5";
+                    other.style.filter = "blur(1px)";
+                }
+            });
+        };
+
+        const zoomOut = () => {
+            card.style.transform = "";
+            card.style.zIndex = "";
+            card.style.boxShadow = "";
+            document.querySelectorAll('.lapak').forEach(other => {
+                other.style.opacity = "";
+                other.style.filter = "";
+            });
+        };
+
+        // Desktop
+        card.addEventListener('mousedown', () => { pressTimer = setTimeout(zoomIn, LONG_PRESS_DURATION); });
+        card.addEventListener('mouseup', () => { clearTimeout(pressTimer); zoomOut(); });
+        card.addEventListener('mouseleave', () => { clearTimeout(pressTimer); zoomOut(); });
+
+        // Mobile
+        card.addEventListener('touchstart', () => { pressTimer = setTimeout(zoomIn, LONG_PRESS_DURATION); });
+        card.addEventListener('touchend', () => { clearTimeout(pressTimer); zoomOut(); });
+        card.addEventListener('touchcancel', () => { clearTimeout(pressTimer); zoomOut(); });
+    });
+}
+
+// =================== Render Pagination ===================
+function renderPagination(totalPages) {
+    const nav = document.getElementById("paginationNav");
+    nav.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    const info = document.createElement("span");
+    info.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+    nav.appendChild(info);
+
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "⬅ Prev";
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => { currentPage--; renderGrid(); };
+    nav.appendChild(prevBtn);
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Next ➡";
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => { currentPage++; renderGrid(); };
+    nav.appendChild(nextBtn);
+}
+
+// =================== Modal Detail Lapak ===================
+function openDetailModal(lapak) {
+    const modal = document.getElementById("detailModal");
+    const title = document.getElementById("detailTitle");
+    const body = document.getElementById("detailBody");
+    if (title) title.textContent = `Detail Lapak ${lapak.noLapak}`;
+    if (body) {
+        body.innerHTML = `
+            <p><b>Nomor:</b> ${lapak.noLapak}</p>
+            <p><b>Nama:</b> ${lapak.nama}</p>
+            <p><b>Status:</b> ${lapak.status}</p>
+        `;
     }
+    modal.style.display = "flex";
+}
 
-    const text = await res.text();
-    let result;
-    try {
-      result = JSON.parse(text);
-    } catch (err) {
-      console.error("JSON parse error:", err, text);
-      showToast("Respon server tidak valid", "error");
-      return;
-    }
+function closeDetailModal() {
+    document.getElementById("detailModal").style.display = "none";
+}
 
-    if (result.success) {
-      showToast(result.message, "success");
-      form.reset();
-      setTimeout(() => {
-        closeRequestModal();
-        closeDetailModal();
-        loadData();
-      }, 1500);
-    } else {
-      showToast(result.message, "error");
-    }
-  } catch (err) {
-    console.error("Fetch error:", err);
-    showToast("Terjadi kesalahan koneksi!", "error");
-  }
-
-  submitBtn.disabled = false;
-  submitBtn.textContent = "Kirim";
-});
-
-// === Toast ===
+// =================== Toast ===================
+const toast = document.getElementById("toast");
 function showToast(message, type) {
-  toast.textContent = message;
-  toast.className = `toast ${type}`;
-  toast.style.display = "block";
-  setTimeout(() => {
-    toast.style.display = "none";
-  }, 3000);
-}
-// Pisahkan teks dalam tanda kurung biar bisa diwarnai
-function formatNama(nama) {
-  return nama.replace(/\((.*?)\)/g, '<span class="inside">($1)</span>');
+    toast.textContent = message;
+    toast.className = `toast ${type}`;
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, 3000);
 }
 
-// === Modal Absensi ===
-async function openAbsensiModal(lapakNo, namaPelapak) {
-  selectedLapak = lapakNo;
-  document.getElementById("absensiTitle").textContent = `Absensi Lapak ${lapakNo} - ${namaPelapak}`;
-  document.getElementById("absensiTableBody").innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
-
-  try {
-    const res = await fetch(`${API_URL}?action=getAbsensi&noLapak=${lapakNo}`);
-    const data = await res.json();
-
-    if (!data.success) {
-      document.getElementById("absensiTableBody").innerHTML =
-        `<tr><td colspan="3">${data.message}</td></tr>`;
-      return;
-    }
-
-    if (data.data.length === 0) {
-      document.getElementById("absensiTableBody").innerHTML =
-        `<tr><td colspan="3">Belum ada data absensi</td></tr>`;
-      return;
-    }
-
-    document.getElementById("absensiTableBody").innerHTML = data.data
-      .map(r => `
-        <tr>
-          <td>${new Date(r.tanggal).toLocaleDateString("id-ID")}</td>
-          <td>${r.nama}</td>
-          <td>${r.status}</td>
-        </tr>
-      `)
-      .join("");
-  } catch (err) {
-    document.getElementById("absensiTableBody").innerHTML =
-      `<tr><td colspan="3">Error: ${err.message}</td></tr>`;
-  }
-
-  document.getElementById("absensiModal").style.display = "flex";
-}
-
-function closeAbsensiModal() {
-  document.getElementById("absensiModal").style.display = "none";
-}
-
-// === Event Listeners ===
-document.getElementById("searchInput").addEventListener("input", () => {
-  currentPage = 1;
-  renderGrid();
-});
-document.getElementById("filterSelect").addEventListener("change", () => {
-  currentPage = 1;
-  renderGrid();
-});
-document.getElementById("rangeSelect").addEventListener("change", () => {
-  currentPage = 1;
-  renderGrid();
-});
+// =================== Event Listeners ===================
+document.getElementById("searchInput").addEventListener("input", () => { currentPage = 1; renderGrid(); });
+document.getElementById("filterSelect").addEventListener("change", () => { currentPage = 1; renderGrid(); });
+document.getElementById("rangeSelect").addEventListener("change", () => { currentPage = 1; renderGrid(); });
 document.getElementById("pageSizeSelect").addEventListener("change", (e) => {
-  pageSize = e.target.value === "all" ? lapakData.length : parseInt(e.target.value);
-  currentPage = 1;
-  renderGrid();
+    pageSize = e.target.value === "all" ? lapakData.length : parseInt(e.target.value);
+    currentPage = 1; renderGrid();
 });
-showLoading(true);
 
-// === Init ===
+// =================== Toolbar Sticky ===================
+window.addEventListener("load", setToolbarTop);
+window.addEventListener("resize", setToolbarTop);
+function setToolbarTop() {
+    const header = document.querySelector("header");
+    const toolbar = document.querySelector(".toolbar");
+    if (header && toolbar) {
+        toolbar.style.top = header.offsetHeight + "px";
+    }
+}
+
+filterSelect.addEventListener("change", () => {
+    if (filterSelect.value === "kosong") {
+        filterSelect.style.backgroundColor = "#2ecc71";
+        filterSelect.style.color = "#000000ff";
+    } else if (filterSelect.value === "terisi") {
+        filterSelect.style.backgroundColor = "#ffffff";
+        filterSelect.style.color = "#000000ff";
+    } else {
+        filterSelect.style.backgroundColor = "";
+        filterSelect.style.color = "";
+    }
+});
+// =================== Init ===================
+showLoading(true);
 loadData();
