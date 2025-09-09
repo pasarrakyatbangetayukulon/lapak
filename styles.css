@@ -113,6 +113,8 @@ header {
     font-size: 1rem;
     opacity: 0.95;
 }
+.btn-danger { background:#dc3545; color:#fff; }
+.btn-danger:hover { background:#c82333; }
 
 /* Main */
 main {
