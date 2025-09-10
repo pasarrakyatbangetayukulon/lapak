@@ -231,7 +231,6 @@ main {
 /* Zoom hanya saat disentuh/hover */
 .lapak:hover {
     position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
     z-index: 2000;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     background: #fff !important;
@@ -264,7 +263,14 @@ main {
     background: #2ecc71;
     color: #fff;
 }
-
+.lapak {
+  transform: none !important;
+  transition: none !important;
+}
+.lapak:hover,
+.lapak:active {
+  transform: none !important;
+}
 .lapak.terisi {
     background: #fff;
     color: #333;
