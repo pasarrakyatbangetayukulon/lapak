@@ -49,9 +49,7 @@ header {
     flex: 100%;
     width: 100%;
     max-width: 400px;
-    /* biar tidak kepanjangan */
     margin: 0 auto;
-    /* center di toolbar */
     font-size: 1rem;
     padding: 12px 16px;
     border-radius: 8px;
@@ -69,7 +67,6 @@ header {
 @media (max-width: 768px) {
     #searchInput {
         max-width: 100%;
-        /* biar full */
         font-size: 0.95rem;
         padding: 10px 14px;
     }
@@ -84,7 +81,6 @@ header {
 
     .toolbar select {
         flex: 100%;
-        /* dropdown juga jadi full width */
         width: 100%;
     }
 }
@@ -92,13 +88,11 @@ header {
 /* Warna khusus untuk option */
 #filterSelect option[value="kosong"] {
     background-color: #2ecc71;
-    /* hijau */
     color: #fff;
 }
 
 #filterSelect option[value="terisi"] {
     background-color: #ffffff;
-    /* putih */
     color: #333;
 }
 
@@ -184,9 +178,16 @@ main {
     font-size: 0.9rem;
     word-break: break-word;
     user-select: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease,
-        background 0.3s ease, color 0.3s ease,
-        opacity 0.3s ease, filter 0.3s ease;
+    transition: none !important;
+    transform: none !important;
+}
+
+/* Efek klik (active state) */
+.lapak:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
+    transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
 }
 
 /* Nomor lapak */
@@ -202,8 +203,6 @@ main {
     font-weight: 700;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
-
-
 
 /* Garis pemisah */
 .lapak-separator {
@@ -228,36 +227,12 @@ main {
     margin-top: 4px;
 }
 
-/* Zoom hanya saat disentuh/hover */
-
-.lapak-info {
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-/* Lapak lain redup ketika grid dihover */
-.lapak {
-    opacity: 0.5;
-    filter: blur(1px);
-}
-
-.lapak:hover {
-    opacity: 1;
-    filter: blur(0);
-}
-
 /* Status */
 .lapak.kosong {
     background: #2ecc71;
     color: #fff;
 }
-.lapak {
-  transform: none !important;
-  transition: none !important;
-}
-.lapak:active {
-  transform: none !important;
-}
+
 .lapak.terisi {
     background: #fff;
     color: #333;
@@ -339,9 +314,7 @@ main {
     border-radius: 1rem;
     width: 90%;
     max-height: 90vh;
-    /* tidak melebihi tinggi layar */
     overflow-y: auto;
-    /* scroll kalau konten terlalu panjang */
     max-width: 500px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s ease;
