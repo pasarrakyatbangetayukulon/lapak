@@ -143,50 +143,6 @@ function renderGrid() {
     if (typeof renderPagination === "function") renderPagination(totalPages);
 }
 
-// =================== Long Press Zoom ===================
-function enableLongPressZoom() {
-    const LONG_PRESS_DURATION = 600;
-
-    document.querySelectorAll('.lapak').forEach(card => {
-        let pressTimer;
-
-        const zoomIn = () => {
-            card.style.transform = "scale(1.4)";
-            card.style.zIndex = "2000";
-            card.style.boxShadow = "0 10px 25px rgba(0,0,0,0.3)";
-            document.querySelectorAll('.lapak').forEach(other => {
-                if (other !== card) {
-                    other.style.opacity = "0.5";
-                    other.style.filter = "blur(1px)";
-                }
-            });
-        };
-
-        const zoomOut = () => {
-            card.style.transform = "";
-            card.style.zIndex = "";
-            card.style.boxShadow = "";
-            document.querySelectorAll('.lapak').forEach(other => {
-                other.style.opacity = "";
-                other.style.filter = "";
-            });
-        };
-
-        // === Desktop only (klik tahan) ===
-        card.addEventListener('mousedown', () => { 
-            pressTimer = setTimeout(zoomIn, LONG_PRESS_DURATION); 
-        });
-        card.addEventListener('mouseup', () => { 
-            clearTimeout(pressTimer); 
-            zoomOut(); 
-        });
-        card.addEventListener('mouseleave', () => { 
-            clearTimeout(pressTimer); 
-            zoomOut(); 
-        });
-    });
-}
-
 
 // =================== Render Pagination ===================
 function renderPagination(totalPages) {
