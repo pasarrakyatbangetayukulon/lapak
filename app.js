@@ -81,6 +81,7 @@ function generateRangeOptions() {
 }
 
 // =================== Render Grid ===================
+// =================== Render Grid ===================
 function renderGrid() {
     const grid = document.getElementById("lapakGrid");
     const searchInput = document.getElementById("searchInput");
@@ -139,7 +140,7 @@ function renderGrid() {
         grid.appendChild(div);
     });
 
-    enableLongPressZoom();
+    // ✅ tidak ada enableLongPressZoom lagi
     if (typeof renderPagination === "function") renderPagination(totalPages);
 }
 
