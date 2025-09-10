@@ -1,11 +1,6 @@
 // =================== Konfigurasi ===================
 const API_URL = "https://script.google.com/macros/s/AKfycbwnf3IcLzgMNXFGAYF8NK4B9rRqd9HkXFuMXFi9de_F0g1GB2KpOq0OS08elQZMBF02nQ/exec";
-const modal = document.querySelector('.modal');
-const modalContent = modal.querySelector('.modal-content');
-const closeBtn = modal.querySelector('.close-btn');
-const filterSelect = document.getElementById("filterSelect");
 let lapakData = [];
-let selectedLapak = "";
 let currentPage = 1;
 let pageSize = Infinity;
 let loadingInterval;
@@ -19,14 +14,16 @@ async function loadData() {
             showToast("Gagal konek ke server (" + res.status + ")", "error");
             return;
         }
+
         const text = await res.text();
         let data;
         try {
             data = JSON.parse(text);
-        } catch (err) {
+        } catch {
             showToast("Respon server tidak valid", "error");
             return;
         }
+
         lapakData = Array.isArray(data) ? data : (data.data || []);
         pageSize = lapakData.length || 1;
 
@@ -36,6 +33,7 @@ async function loadData() {
         generateRangeOptions();
         renderGrid();
     } catch (err) {
+        console.error(err);
         showToast("Terjadi kesalahan koneksi!", "error");
     } finally {
         showLoading(false);
@@ -64,35 +62,23 @@ function showLoading(show) {
 function generateRangeOptions() {
     const rangeSelect = document.getElementById("rangeSelect");
     rangeSelect.innerHTML = "";
-    const optAll = document.createElement("option");
-    optAll.value = "all";
-    optAll.textContent = "Semua Nomor";
+    const optAll = new Option("Semua Nomor", "all");
     rangeSelect.appendChild(optAll);
 
     let maxNo = lapakData.length > 0 ? lapakData[lapakData.length - 1].no : 0;
     let step = 50;
     for (let start = 1; start <= maxNo; start += step) {
         let end = Math.min(start + step - 1, maxNo);
-        const opt = document.createElement("option");
-        opt.value = `${start}-${end}`;
-        opt.textContent = `${start} - ${end}`;
-        rangeSelect.appendChild(opt);
+        rangeSelect.appendChild(new Option(`${start} - ${end}`, `${start}-${end}`));
     }
 }
 
 // =================== Render Grid ===================
-// =================== Render Grid ===================
 function renderGrid() {
     const grid = document.getElementById("lapakGrid");
-    const searchInput = document.getElementById("searchInput");
-    const filterSelect = document.getElementById("filterSelect");
-    const rangeSelect = document.getElementById("rangeSelect");
-
-    if (!grid || !searchInput || !filterSelect || !rangeSelect) return;
-
-    const search = searchInput.value.toLowerCase();
-    const filter = filterSelect.value;
-    const range = rangeSelect.value;
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const filter = document.getElementById("filterSelect").value;
+    const range = document.getElementById("rangeSelect").value;
 
     grid.innerHTML = "";
 
@@ -116,34 +102,27 @@ function renderGrid() {
     pageData.forEach(({ no, nama, status }) => {
         const div = document.createElement("div");
         div.className = "lapak " + status;
-        div.setAttribute("data-no", no);
-        div.setAttribute("data-nama", nama);
+        div.dataset.no = no;
+        div.dataset.nama = nama;
 
         div.innerHTML = `
-            <div class="lapak-info">
-                <div class="lapak-no">Lapak: <span class="number">${no}</span></div>
-                <hr class="lapak-separator" />
-                <div class="lapak-nama">
-                    ${nama.replace(/\(.*?\)/g, '')} 
-                </div>
-                ${/\(.*?\)/.test(nama) ? `
-                    <hr class="lapak-separator" />
-                    <div class="lapak-inside">${nama.match(/\((.*?)\)/)[1]}</div>
-                ` : ""}
-            </div>
-        `;
+      <div class="lapak-info">
+        <div class="lapak-no">Lapak: <span class="number">${no}</span></div>
+        <hr class="lapak-separator" />
+        <div class="lapak-nama">${nama.replace(/\(.*?\)/g, '')}</div>
+        ${/\(.*?\)/.test(nama) ? `
+          <hr class="lapak-separator" />
+          <div class="lapak-inside">${nama.match(/\((.*?)\)/)[1]}</div>
+        ` : ""}
+      </div>
+    `;
 
-        if (typeof openDetailModal === "function") {
-            div.onclick = () => openDetailModal({ noLapak: no, nama: nama, status: status });
-        }
-
+        div.onclick = () => openDetailModal({ noLapak: no, nama, status });
         grid.appendChild(div);
     });
 
-    // ✅ tidak ada enableLongPressZoom lagi
-    if (typeof renderPagination === "function") renderPagination(totalPages);
+    renderPagination(totalPages);
 }
-
 
 // =================== Render Pagination ===================
 function renderPagination(totalPages) {
@@ -151,9 +130,7 @@ function renderPagination(totalPages) {
     nav.innerHTML = "";
     if (totalPages <= 1) return;
 
-    const info = document.createElement("span");
-    info.textContent = `Halaman ${currentPage} dari ${totalPages}`;
-    nav.appendChild(info);
+    nav.append(`Halaman ${currentPage} dari ${totalPages}`);
 
     const prevBtn = document.createElement("button");
     prevBtn.textContent = "⬅ Prev";
@@ -173,24 +150,30 @@ function openDetailModal(lapak) {
     const modal = document.getElementById("detailModal");
     const title = document.getElementById("detailTitle");
     const body = document.getElementById("detailBody");
-    if (title) title.textContent = `Detail Lapak ${lapak.noLapak}`;
-    if (body) {
-        body.innerHTML = `
-            <p><b>Nomor:</b> ${lapak.noLapak}</p>
-            <p><b>Nama:</b> ${lapak.nama}</p>
-            <p><b>Status:</b> ${lapak.status}</p>
-        `;
-    }
+
+    title.textContent = `Detail Lapak ${lapak.noLapak}`;
+    body.innerHTML = `
+    <p><b>Nomor:</b> ${lapak.noLapak}</p>
+    <p><b>Nama:</b> ${lapak.nama}</p>
+    <p><b>Status:</b> ${lapak.status}</p>
+  `;
+
+    // simpan data untuk absensi & request
+    modal.dataset.lapakId = lapak.noLapak;
+    modal.dataset.lapakName = lapak.nama;
+
     modal.style.display = "flex";
 }
-
 function closeDetailModal() {
     document.getElementById("detailModal").style.display = "none";
 }
+function closeRequestModal() {
+    document.getElementById("requestModal").style.display = "none";
+}
 
 // =================== Toast ===================
-const toast = document.getElementById("toast");
-function showToast(message, type) {
+function showToast(message, type = "success") {
+    const toast = document.getElementById("toast");
     toast.textContent = message;
     toast.className = `toast ${type}`;
     toast.style.display = "block";
@@ -206,29 +189,68 @@ document.getElementById("pageSizeSelect").addEventListener("change", (e) => {
     currentPage = 1; renderGrid();
 });
 
-// =================== Toolbar Sticky ===================
-window.addEventListener("load", setToolbarTop);
-window.addEventListener("resize", setToolbarTop);
-function setToolbarTop() {
-    const header = document.querySelector("header");
-    const toolbar = document.querySelector(".toolbar");
-    if (header && toolbar) {
-        toolbar.style.top = header.offsetHeight + "px";
-    }
-}
-
-filterSelect.addEventListener("change", () => {
-    if (filterSelect.value === "kosong") {
-        filterSelect.style.backgroundColor = "#2ecc71";
-        filterSelect.style.color = "#000000ff";
-    } else if (filterSelect.value === "terisi") {
-        filterSelect.style.backgroundColor = "#ffffff";
-        filterSelect.style.color = "#000000ff";
+// Filter select warna
+document.getElementById("filterSelect").addEventListener("change", (e) => {
+    const sel = e.target;
+    if (sel.value === "kosong") {
+        sel.style.backgroundColor = "#2ecc71"; sel.style.color = "#000";
+    } else if (sel.value === "terisi") {
+        sel.style.backgroundColor = "#ffffff"; sel.style.color = "#000";
     } else {
-        filterSelect.style.backgroundColor = "";
-        filterSelect.style.color = "";
+        sel.style.backgroundColor = ""; sel.style.color = "";
     }
 });
+
+// Tombol Absensi & Request
+document.getElementById("btnAbsensi").addEventListener("click", () => {
+    const detailModal = document.getElementById("detailModal");
+    openAbsensiModal(detailModal.dataset.lapakId, detailModal.dataset.lapakName);
+});
+document.getElementById("btnRequest").addEventListener("click", () => {
+    const detailModal = document.getElementById("detailModal");
+    document.getElementById("lapakLama").value = `${detailModal.dataset.lapakId} - ${detailModal.dataset.lapakName}`;
+    document.getElementById("requestModal").style.display = "flex";
+});
+
+// Form Request
+document.getElementById("requestForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const nama = document.getElementById("nama").value.trim();
+    const lapakLama = document.getElementById("lapakLama").value.trim();
+    const lapakBaru = document.getElementById("lapakBaru").value.trim();
+    const alasan = document.getElementById("alasan").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const submitBtn = document.getElementById("submitBtn");
+
+    if (!nama || !lapakBaru || !alasan || !password) {
+        showToast("⚠️ Semua field wajib diisi!", "error");
+        return;
+    }
+
+    submitBtn.classList.add("loading");
+    submitBtn.disabled = true;
+
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                action: "requestPergantian",
+                nama, lapakLama, lapakBaru, alasan, password,
+            }),
+        });
+        const result = await response.json();
+        showToast(result.message || "✅ Request berhasil dikirim", "success");
+        closeRequestModal();
+    } catch (err) {
+        console.error("Error request:", err);
+        showToast("❌ Gagal mengirim request.", "error");
+    } finally {
+        submitBtn.classList.remove("loading");
+        submitBtn.disabled = false;
+    }
+});
+
 // =================== Init ===================
 showLoading(true);
 loadData();
