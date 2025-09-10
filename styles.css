@@ -232,19 +232,16 @@ main {
 .lapak:hover {
     position: relative;
     z-index: 2000;
+    cursor: default !important;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     background: #fff !important;
     color: #000 !important;
 }
 
-/* Teks ikut zoom */
-.lapak .lapak-info {
-    transition: font-size 0.3s ease, font-weight 0.3s ease;
-}
-
 .lapak:hover .lapak-info {
     font-size: 1.2rem;
     font-weight: bold;
+    cursor: default !important;
 }
 
 /* Lapak lain redup ketika grid dihover */
