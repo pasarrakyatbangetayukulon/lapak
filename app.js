@@ -172,17 +172,21 @@ function enableLongPressZoom() {
             });
         };
 
-        // Desktop
-        card.addEventListener('mousedown', () => { pressTimer = setTimeout(zoomIn, LONG_PRESS_DURATION); });
-        card.addEventListener('mouseup', () => { clearTimeout(pressTimer); zoomOut(); });
-        card.addEventListener('mouseleave', () => { clearTimeout(pressTimer); zoomOut(); });
-
-        // Mobile
-        card.addEventListener('touchstart', () => { pressTimer = setTimeout(zoomIn, LONG_PRESS_DURATION); });
-        card.addEventListener('touchend', () => { clearTimeout(pressTimer); zoomOut(); });
-        card.addEventListener('touchcancel', () => { clearTimeout(pressTimer); zoomOut(); });
+        // === Desktop only (klik tahan) ===
+        card.addEventListener('mousedown', () => { 
+            pressTimer = setTimeout(zoomIn, LONG_PRESS_DURATION); 
+        });
+        card.addEventListener('mouseup', () => { 
+            clearTimeout(pressTimer); 
+            zoomOut(); 
+        });
+        card.addEventListener('mouseleave', () => { 
+            clearTimeout(pressTimer); 
+            zoomOut(); 
+        });
     });
 }
+
 
 // =================== Render Pagination ===================
 function renderPagination(totalPages) {
