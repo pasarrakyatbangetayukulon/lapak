@@ -31,6 +31,7 @@ async function confirmAbsensi() {
   }
 
   try {
+    showAbsensiLoading(true);
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -49,5 +50,19 @@ async function confirmAbsensi() {
   } catch (err) {
     console.error("Error absensi:", err);
     alert("❌ Gagal menyimpan absensi.");
+  } finally {
+    // sembunyikan loading saat toast muncul
+    setTimeout(() => showAbsensiLoading(false), 300);
+  }
+}
+function showAbsensiLoading(show, text = "Sedang menyimpan data...") {
+  const loader = document.getElementById("absensiLoading");
+  const loadingText = document.getElementById("absensiLoadingText");
+
+  if (show) {
+    loader.style.display = "flex";
+    loadingText.textContent = text;
+  } else {
+    loader.style.display = "none";
   }
 }
